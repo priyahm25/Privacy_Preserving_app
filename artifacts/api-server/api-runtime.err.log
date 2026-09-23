@@ -1,0 +1,53 @@
+Clerk auth verification failed: TypeError: fetch failed
+    at node:internal/deps/undici/undici:15845:13
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async fetchJWKSFromBAPI (C:\Users\priya\Downloads\Finalyear_new\node_modules\.pnpm\@clerk+backend@3.16.6\node_modules\@clerk\backend\src\tokens\keys.ts:188:20)
+    at async retry (C:\Users\priya\Downloads\Finalyear_new\node_modules\.pnpm\@clerk+shared@4.29.1\node_modules\@clerk\shared\src\retry.ts:111:14)
+    at async loadClerkJWKFromRemote (C:\Users\priya\Downloads\Finalyear_new\node_modules\.pnpm\@clerk+backend@3.16.6\node_modules\@clerk\backend\src\tokens\keys.ts:143:22)
+    at async verifyToken (C:\Users\priya\Downloads\Finalyear_new\node_modules\.pnpm\@clerk+backend@3.16.6\node_modules\@clerk\backend\src\tokens\verify.ts:143:13)
+    at async <anonymous> (C:\Users\priya\Downloads\Finalyear_new\node_modules\.pnpm\@clerk+backend@3.16.6\node_modules\@clerk\backend\src\jwt\legacyReturn.ts:6:30)
+    at async requireAuth (C:\Users\priya\Downloads\Finalyear_new\artifacts\api-server\src\middlewares\auth.ts:56:21) {
+  [cause]: Error: getaddrinfo ENOTFOUND api.clerk.com
+      at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+    errno: -3008,
+    code: 'ENOTFOUND',
+    syscall: 'getaddrinfo',
+    hostname: 'api.clerk.com'
+  }
+}
+Error syncing user: _DrizzleQueryError: Failed query: insert into "users" ("clerk_id", "email", "name", "created_at") values ($1, $2, $3, default)
+params: user_3HqY7MZ7hfXfMaAp027zXWuDhWv,priyahm271@gmail.com,Priya HM
+    at NodePgPreparedQuery.queryWithCache (C:\Users\priya\Downloads\Finalyear_new\node_modules\.pnpm\drizzle-orm@0.45.2_@types+pg@8.20.0_pg@8.22.0\node_modules\src\pg-core\session.ts:73:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async <anonymous> (C:\Users\priya\Downloads\Finalyear_new\artifacts\api-server\src\routes\teammates.ts:86:9) {
+  query: 'insert into "users" ("clerk_id", "email", "name", "created_at") values ($1, $2, $3, default)',
+  params: [
+    'user_3HqY7MZ7hfXfMaAp027zXWuDhWv',
+    'priyahm271@gmail.com',
+    'Priya HM'
+  ],
+  cause: error: duplicate key value violates unique constraint "users_pkey"
+      at <anonymous> (C:\Users\priya\Downloads\Finalyear_new\node_modules\.pnpm\pg-pool@3.14.0_pg@8.22.0\node_modules\pg-pool\index.js:45:11)
+      at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+      at async <anonymous> (C:\Users\priya\Downloads\Finalyear_new\node_modules\.pnpm\drizzle-orm@0.45.2_@types+pg@8.20.0_pg@8.22.0\node_modules\src\node-postgres\session.ts:149:14)
+      at async NodePgPreparedQuery.queryWithCache (C:\Users\priya\Downloads\Finalyear_new\node_modules\.pnpm\drizzle-orm@0.45.2_@types+pg@8.20.0_pg@8.22.0\node_modules\src\pg-core\session.ts:71:12)
+      at async <anonymous> (C:\Users\priya\Downloads\Finalyear_new\artifacts\api-server\src\routes\teammates.ts:86:9) {
+    length: 217,
+    severity: 'ERROR',
+    code: '23505',
+    detail: 'Key (clerk_id)=(user_3HqY7MZ7hfXfMaAp027zXWuDhWv) already exists.',
+    hint: undefined,
+    position: undefined,
+    internalPosition: undefined,
+    internalQuery: undefined,
+    where: undefined,
+    schema: 'public',
+    table: 'users',
+    column: undefined,
+    dataType: undefined,
+    constraint: 'users_pkey',
+    file: 'nbtinsert.c',
+    line: '666',
+    routine: '_bt_check_unique'
+  }
+}

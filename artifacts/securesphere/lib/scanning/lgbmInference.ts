@@ -75,10 +75,13 @@ export function lgbmPredict(model: LGBMModel, featureVector: number[]): number {
     );
   }
 
-  // Sum all tree leaf values
+  // LightGBM stores the learning-rate multiplier on each tree. Leaf values
+  // from `dump_model()` are pre-shrinkage, so omitting this factor amplifies
+  // a 300-tree model by roughly 20x and makes ordinary files saturate at a
+  // malicious probability near 1.0.
   let rawScore = 0;
   for (const tree of model.trees) {
-    rawScore += traverseTree(tree.root, featureVector);
+    rawScore += tree.shrinkage * traverseTree(tree.root, featureVector);
   }
 
   // Apply sigmoid (LightGBM binary objective uses log-loss with sigmoid)

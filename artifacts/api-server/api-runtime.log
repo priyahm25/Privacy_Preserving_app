@@ -1,0 +1,6053 @@
+[23:56:08.412] [32mINFO[39m (38080): [36mServer listening[39m
+    [35mport[39m: 3000
+[23:56:10.345] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 1,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 13
+[23:56:11.072] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 3,
+      "method": "GET",
+      "url": "/api/healthz"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 9
+[23:56:13.328] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 2,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 2980
+[23:56:15.539] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 2
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[23:56:15.541] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 4,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 3528
+[23:56:16.837] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 2
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[23:56:16.839] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 6,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 3021
+[23:56:17.034] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 1
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[23:56:17.035] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 5,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 4528
+[23:56:17.113] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 7,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 2766
+[23:56:17.830] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 8,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 3
+[23:56:18.191] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 2
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[23:56:18.192] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 9,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 358
+[23:56:18.474] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 1
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[23:56:18.476] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 10,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 378
+[23:56:18.766] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 2
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[23:56:18.767] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 11,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 335
+[23:56:31.486] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 12,
+      "method": "OPTIONS",
+      "url": "/api/files/e0abfa3e-8ea5-4451-b0f8-4c35a52aac97"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[23:56:32.824] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 13,
+      "method": "GET",
+      "url": "/api/files/e0abfa3e-8ea5-4451-b0f8-4c35a52aac97"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 1331
+[23:56:57.416] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 14,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[23:56:58.641] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 1
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[23:56:58.643] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 15,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 1224
+[23:56:59.144] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 17,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 166
+[23:56:59.495] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 16,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 1159
+[23:56:59.648] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 18,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 183
+[23:56:59.959] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 19,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 193
+[23:57:00.195] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 20,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 169
+[23:57:04.072] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 21,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[23:57:04.250] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 22,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 175
+[23:57:05.766] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 23,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 327
+[23:57:34.361] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 24,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[23:57:36.192] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 25,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 1829
+[23:57:39.566] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 1
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[23:57:39.567] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 26,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 662
+[23:57:59.206] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 27,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[23:58:00.629] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 1
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[23:58:00.630] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 28,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 1422
+[23:58:01.047] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 30,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 235
+[23:58:01.220] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 29,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 876
+[23:58:01.376] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 31,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 215
+[23:58:02.300] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 1
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[23:58:02.301] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 32,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 793
+[23:58:24.970] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 33,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[23:58:26.059] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 34,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 1086
+[23:59:06.333] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 35,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[23:59:12.405] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 41,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 2
+[23:59:18.698] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 40,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 9970
+[23:59:18.805] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 39,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 10705
+[23:59:19.549] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 37,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 12140
+[23:59:19.763] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 43,
+      "method": "OPTIONS",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[23:59:20.176] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 38,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 12385
+[23:59:20.709] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 42,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 8302
+[23:59:21.197] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 2
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[23:59:21.198] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 36,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 14862
+[23:59:26.195] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 44,
+      "method": "GET",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 6428
+[00:08:18.034] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 45,
+      "method": "OPTIONS",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 8
+[00:08:18.188] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 47,
+      "method": "OPTIONS",
+      "url": "/api/teammates/sync-user"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[00:08:20.797] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 48,
+      "method": "POST",
+      "url": "/api/teammates/sync-user"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 2607
+[00:08:20.803] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 49,
+      "method": "OPTIONS",
+      "url": "/api/keys/me"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[00:08:20.828] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 46,
+      "method": "GET",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 2791
+[00:08:20.972] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 50,
+      "method": "GET",
+      "url": "/api/keys/me"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 165
+[00:08:27.496] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 51,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[00:08:27.917] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 1
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[00:08:27.918] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 52,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 420
+[00:08:31.533] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 1
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[00:08:31.533] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 53,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 397
+[00:08:31.906] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 54,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 221
+[00:08:32.589] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 55,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 222
+[00:08:32.636] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 56,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[00:08:32.829] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 57,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 192
+[00:08:51.432] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 58,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[00:08:52.719] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 60,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 965
+[00:08:52.955] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 1
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[00:08:52.956] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 59,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 1522
+[00:08:53.315] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 1
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[00:08:53.316] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 63,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 384
+[00:08:53.317] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 61,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 947
+[00:08:53.670] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 62,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 1006
+[00:08:55.515] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 64,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 289
+[00:09:46.094] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 65,
+      "method": "OPTIONS",
+      "url": "/api/keys/me"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[00:09:47.487] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 66,
+      "method": "GET",
+      "url": "/api/keys/me"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 1391
+[00:09:49.000] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 67,
+      "method": "OPTIONS",
+      "url": "/api/files/upload"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[00:09:49.282] [32mINFO[39m (38080): [36mUploading encrypted object to Storage[39m
+    [35mstage[39m: "storage-upload"
+    [35mbucket[39m: "secure-files"
+    [35mpath[39m: "user_3J0KZYrPnqvHh0F1nm0o4GQ2X8u/43cac1d6-1ca0-474a-a6af-540eb30a9ef2.enc"
+    [35mciphertextBytes[39m: 956083
+    [35mcontentType[39m: "application/octet-stream"
+[00:10:15.497] [32mINFO[39m (38080): [36mEncrypted upload and blind index committed[39m
+    [35mfileId[39m: "32a1cc47-c9e7-41a1-94e7-985b12e04170"
+    [35mindexedTokenCount[39m: 5000
+[00:10:15.498] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 68,
+      "method": "POST",
+      "url": "/api/files/upload"
+    }
+    [35mres[39m: {
+      "statusCode": 201
+    }
+    [35mresponseTime[39m: 26495
+[00:10:29.859] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 69,
+      "method": "OPTIONS",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[00:10:29.860] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 70,
+      "method": "OPTIONS",
+      "url": "/api/teammates/sync-user"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[00:10:31.136] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 71,
+      "method": "POST",
+      "url": "/api/teammates/sync-user"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 1273
+[00:10:31.140] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 73,
+      "method": "OPTIONS",
+      "url": "/api/keys/me"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[00:10:31.270] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 72,
+      "method": "GET",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 1404
+[00:10:31.338] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 74,
+      "method": "GET",
+      "url": "/api/keys/me"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 195
+[00:10:46.582] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 75,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[00:10:47.980] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 2
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[00:10:47.981] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 76,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 1396
+[00:10:48.288] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 78,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 181
+[00:10:48.600] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 2
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[00:10:48.601] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 77,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 1166
+[00:10:55.077] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 79,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[00:10:55.631] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 81,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 223
+[00:10:55.643] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 2
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[00:10:55.644] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 80,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 565
+[00:10:56.556] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 82,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 852
+[00:10:58.079] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 83,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 225
+[00:10:59.510] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 84,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 634
+[00:11:00.033] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 85,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 229
+[00:11:11.565] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 86,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[00:11:12.552] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 87,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 985
+[00:11:16.729] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 2
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[00:11:16.730] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 88,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 519
+[00:11:20.631] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 89,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[00:11:21.135] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 2
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[00:11:21.136] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 90,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 503
+[00:11:25.124] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 1
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[00:11:25.124] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 91,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 492
+[00:11:25.838] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 92,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 305
+[00:11:43.222] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 93,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[00:11:44.820] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 94,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 1596
+[00:11:45.498] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 2
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[00:11:45.499] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 95,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 575
+[00:11:47.854] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 3
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[00:11:47.855] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 96,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 691
+[00:11:50.359] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 97,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[00:11:50.775] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 1
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[00:11:50.776] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 98,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 415
+[00:11:50.999] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 99,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 206
+[00:11:53.390] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 1
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[00:11:53.391] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 100,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 511
+[00:11:54.134] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 1
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[00:11:54.134] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 101,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 411
+[00:11:55.915] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 102,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[00:11:56.437] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 1
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[00:11:56.438] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 103,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 519
+[00:11:57.279] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 2
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[00:11:57.280] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 104,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 424
+[00:11:57.809] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 1
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[00:11:57.810] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 105,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 467
+[00:11:59.046] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 106,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 1265
+[00:12:00.964] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 107,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 209
+[00:12:01.810] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 108,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[00:12:02.677] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 1
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[00:12:02.678] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 109,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 851
+[00:12:02.839] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 2
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[00:12:02.840] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 110,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 389
+[00:12:04.213] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 1
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[00:12:04.214] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 111,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 392
+[00:12:05.214] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 1
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[00:12:05.215] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 112,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 812
+[00:12:08.097] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 113,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[00:12:08.312] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 114,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 213
+[00:22:16.664] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 115,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 79
+[00:22:20.726] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 117,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 3358
+[00:22:20.734] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 116,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 4045
+[00:22:20.962] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 1
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[00:22:20.974] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 118,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 3040
+[00:22:57.630] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 119,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 2
+[00:22:57.644] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 120,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 5
+[00:22:58.772] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 122,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 1105
+[00:22:58.940] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 1
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[00:22:58.945] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 123,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 1236
+[00:22:58.990] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 2
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[00:22:58.997] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 121,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 1341
+[00:23:08.404] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 124,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 17
+[00:23:09.325] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 2
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[00:23:09.332] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 125,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 919
+[00:23:10.347] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 1
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[00:23:10.388] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 126,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 1506
+[00:23:10.481] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 1
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[00:23:10.585] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 127,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 583
+[00:23:20.617] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 128,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 9
+[00:23:21.975] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 129,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 1314
+[00:23:26.891] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 130,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 1382
+[00:23:27.708] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 131,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 4
+[00:23:28.203] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 2
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[00:23:28.218] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 132,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 490
+[00:23:58.283] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 133,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 55
+[00:23:59.772] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 2
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[00:23:59.793] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 134,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 1453
+[00:23:59.963] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 2
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[00:24:00.039] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 135,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 1428
+[00:24:04.857] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 136,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 25
+[00:24:05.387] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 137,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 497
+[09:54:20.000] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 138,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 39
+[09:54:27.649] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 140,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 7042
+[09:54:27.652] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 139,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 7631
+[09:54:27.884] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 1
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[09:54:27.887] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 141,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 6771
+[09:58:21.619] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 142,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 26
+[09:58:24.655] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 1
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[09:58:24.664] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 144,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 2393
+[09:58:24.721] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 2
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[09:58:24.723] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 143,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 3095
+[09:58:28.374] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 145,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[09:58:28.828] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 2
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[09:58:28.829] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 146,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 453
+[09:58:29.123] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 2
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[09:58:29.124] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 147,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 395
+[09:58:34.967] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 148,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[09:58:36.375] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 2
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[09:58:36.377] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 149,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 1406
+[09:58:36.788] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 2
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[09:58:36.789] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 150,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 427
+[09:59:26.419] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 151,
+      "method": "OPTIONS",
+      "url": "/api/keys/me"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[09:59:28.754] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 152,
+      "method": "GET",
+      "url": "/api/keys/me"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 2324
+[09:59:30.591] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 153,
+      "method": "OPTIONS",
+      "url": "/api/files/upload"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[09:59:30.876] [32mINFO[39m (38080): [36mUploading encrypted object to Storage[39m
+    [35mstage[39m: "storage-upload"
+    [35mbucket[39m: "secure-files"
+    [35mpath[39m: "user_3J0KZYrPnqvHh0F1nm0o4GQ2X8u/827a2497-e82a-4aef-9fd4-25af7d63cc40.enc"
+    [35mciphertextBytes[39m: 2590069
+    [35mcontentType[39m: "application/octet-stream"
+[10:00:04.822] [32mINFO[39m (38080): [36mEncrypted upload and blind index committed[39m
+    [35mfileId[39m: "c3e2c70c-d5bb-4b67-aeb3-e1f980bc4dee"
+    [35mindexedTokenCount[39m: 5000
+[10:00:04.824] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 154,
+      "method": "POST",
+      "url": "/api/files/upload"
+    }
+    [35mres[39m: {
+      "statusCode": 201
+    }
+    [35mresponseTime[39m: 34227
+[10:00:15.973] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 155,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[10:00:17.374] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 3
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[10:00:17.375] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 156,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 1400
+[10:00:35.087] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 157,
+      "method": "OPTIONS",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[10:00:35.088] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 158,
+      "method": "OPTIONS",
+      "url": "/api/teammates/sync-user"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[10:00:36.629] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 160,
+      "method": "GET",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 1536
+[10:00:36.639] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 159,
+      "method": "POST",
+      "url": "/api/teammates/sync-user"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 1547
+[10:00:36.703] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 161,
+      "method": "OPTIONS",
+      "url": "/api/keys/me"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[10:00:37.025] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 162,
+      "method": "GET",
+      "url": "/api/keys/me"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 317
+[10:01:17.510] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 163,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[10:01:18.838] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 3
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[10:01:18.838] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 164,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 1325
+[10:01:18.839] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 2
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[10:01:18.839] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 165,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 1024
+[10:01:19.226] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 166,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 986
+[10:01:19.483] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 167,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 191
+[10:01:20.149] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 168,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 179
+[10:01:21.481] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 3
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[10:01:21.482] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 169,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 649
+[10:01:22.290] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 2
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[10:01:22.291] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 170,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 457
+[10:01:22.521] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 171,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 222
+[10:01:23.235] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 172,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[10:01:23.459] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 173,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 222
+[10:01:36.680] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 174,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[10:01:38.171] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 175,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 1489
+[10:01:38.556] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 176,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 206
+[10:01:40.659] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 177,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 160
+[10:02:00.767] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 178,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[10:02:06.272] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 181,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 4126
+[10:02:06.448] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 3
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[10:02:06.449] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 179,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 5680
+[10:02:06.460] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 1
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[10:02:06.461] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 180,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 5001
+[10:02:06.465] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 182,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 2527
+[10:02:06.586] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 185,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[10:02:06.740] [31mERROR[39m (38080): [36mFailed to search encrypted files[39m
+    err: {
+      "type": "_DrizzleQueryError",
+      "message": "Failed query: select \"file_search_tokens\".\"file_id\", \"files\".\"created_at\" from \"file_search_tokens\" inner join \"files\" on \"files\".\"id\" = \"file_search_tokens\".\"file_id\" where (\"file_search_tokens\".\"user_id\" = $1 and \"files\".\"owner_clerk_id\" = $2 and \"file_search_tokens\".\"token\" in ($3)) group by \"file_search_tokens\".\"file_id\", \"files\".\"created_at\" having count(distinct \"file_search_tokens\".\"token\") = $4 order by \"files\".\"created_at\" desc, \"file_search_tokens\".\"file_id\" desc limit $5\nparams: user_3J0KZYrPnqvHh0F1nm0o4GQ2X8u,user_3J0KZYrPnqvHh0F1nm0o4GQ2X8u,9083f1f2226be582efaf8881fd168bb4ccf18fe2d6711c6a707bb99bcb86014d,1,26: (EMAXCONNSESSION) max clients reached in session mode - max clients are limited to pool_size: 15",
+      "stack":
+          Error: Failed query: select "file_search_tokens"."file_id", "files"."created_at" from "file_search_tokens" inner join "files" on "files"."id" = "file_search_tokens"."file_id" where ("file_search_tokens"."user_id" = $1 and "files"."owner_clerk_id" = $2 and "file_search_tokens"."token" in ($3)) group by "file_search_tokens"."file_id", "files"."created_at" having count(distinct "file_search_tokens"."token") = $4 order by "files"."created_at" desc, "file_search_tokens"."file_id" desc limit $5
+          params: user_3J0KZYrPnqvHh0F1nm0o4GQ2X8u,user_3J0KZYrPnqvHh0F1nm0o4GQ2X8u,9083f1f2226be582efaf8881fd168bb4ccf18fe2d6711c6a707bb99bcb86014d,1,26
+              at NodePgPreparedQuery.queryWithCache (C:\Users\priya\Downloads\Finalyear_new\node_modules\.pnpm\drizzle-orm@0.45.2_@types+pg@8.20.0_pg@8.22.0\node_modules\src\pg-core\session.ts:73:11)
+              at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+              at async <anonymous> (C:\Users\priya\Downloads\Finalyear_new\node_modules\.pnpm\drizzle-orm@0.45.2_@types+pg@8.20.0_pg@8.22.0\node_modules\src\node-postgres\session.ts:154:19)
+              at async <anonymous> (C:\Users\priya\Downloads\Finalyear_new\artifacts\api-server\src\routes\files.ts:489:29)
+          caused by: error: (EMAXCONNSESSION) max clients reached in session mode - max clients are limited to pool_size: 15
+              at <anonymous> (C:\Users\priya\Downloads\Finalyear_new\node_modules\.pnpm\pg-pool@3.14.0_pg@8.22.0\node_modules\pg-pool\index.js:45:11)
+              at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+              at async <anonymous> (C:\Users\priya\Downloads\Finalyear_new\node_modules\.pnpm\drizzle-orm@0.45.2_@types+pg@8.20.0_pg@8.22.0\node_modules\src\node-postgres\session.ts:161:13)
+              at async NodePgPreparedQuery.queryWithCache (C:\Users\priya\Downloads\Finalyear_new\node_modules\.pnpm\drizzle-orm@0.45.2_@types+pg@8.20.0_pg@8.22.0\node_modules\src\pg-core\session.ts:71:12)
+              at async <anonymous> (C:\Users\priya\Downloads\Finalyear_new\node_modules\.pnpm\drizzle-orm@0.45.2_@types+pg@8.20.0_pg@8.22.0\node_modules\src\node-postgres\session.ts:154:19)
+              at async <anonymous> (C:\Users\priya\Downloads\Finalyear_new\artifacts\api-server\src\routes\files.ts:489:29)
+      "query": "select \"file_search_tokens\".\"file_id\", \"files\".\"created_at\" from \"file_search_tokens\" inner join \"files\" on \"files\".\"id\" = \"file_search_tokens\".\"file_id\" where (\"file_search_tokens\".\"user_id\" = $1 and \"files\".\"owner_clerk_id\" = $2 and \"file_search_tokens\".\"token\" in ($3)) group by \"file_search_tokens\".\"file_id\", \"files\".\"created_at\" having count(distinct \"file_search_tokens\".\"token\") = $4 order by \"files\".\"created_at\" desc, \"file_search_tokens\".\"file_id\" desc limit $5",
+      "params": [
+        "user_3J0KZYrPnqvHh0F1nm0o4GQ2X8u",
+        "user_3J0KZYrPnqvHh0F1nm0o4GQ2X8u",
+        "9083f1f2226be582efaf8881fd168bb4ccf18fe2d6711c6a707bb99bcb86014d",
+        1,
+        26
+      ]
+    }
+[10:02:06.979] [32mINFO[39m (38080): [36mrequest errored[39m
+    [35mreq[39m: {
+      "id": 184,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 500
+    }
+    [35mresponseTime[39m: 1742
+    err: {
+      "type": "Error",
+      "message": "failed with status code 500",
+      "stack":
+          Error: failed with status code 500
+              at onResFinished (C:\Users\priya\Downloads\Finalyear_new\node_modules\.pnpm\pino-http@10.5.0\node_modules\pino-http\logger.js:115:39)
+              at ServerResponse.onResponseComplete (C:\Users\priya\Downloads\Finalyear_new\node_modules\.pnpm\pino-http@10.5.0\node_modules\pino-http\logger.js:178:14)
+              at ServerResponse.emit (node:events:520:35)
+              at onFinish (node:_http_outgoing:1024:10)
+              at callback (node:internal/streams/writable:764:21)
+              at afterWrite (node:internal/streams/writable:708:5)
+              at afterWriteTick (node:internal/streams/writable:694:10)
+              at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+    }
+[10:02:06.987] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 183,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 2091
+[10:02:06.988] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 186,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 400
+[10:02:08.142] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 187,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 210
+[10:02:08.395] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 188,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 180
+[10:02:08.952] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 1
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[10:02:08.953] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 189,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 371
+[10:02:14.441] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 190,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[10:02:14.638] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 191,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 195
+[10:02:15.310] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 1
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[10:02:15.311] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 192,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 368
+[10:02:17.904] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 193,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 282
+[10:02:18.530] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 1
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[10:02:18.532] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 194,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 452
+[10:10:16.771] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 195,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 15
+[10:10:41.625] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 196,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 401
+    }
+    [35mresponseTime[39m: 24850
+[10:25:04.824] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 197,
+      "method": "OPTIONS",
+      "url": "/api/teammates/sync-user"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 10
+[10:25:07.024] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 198,
+      "method": "POST",
+      "url": "/api/teammates/sync-user"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 2195
+[10:25:07.034] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 199,
+      "method": "OPTIONS",
+      "url": "/api/keys/me"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[10:25:07.290] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 200,
+      "method": "GET",
+      "url": "/api/keys/me"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 251
+[10:25:14.591] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 201,
+      "method": "OPTIONS",
+      "url": "/api/teammates/sync-user"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[10:25:15.247] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 202,
+      "method": "POST",
+      "url": "/api/teammates/sync-user"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 654
+[10:25:15.252] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 203,
+      "method": "OPTIONS",
+      "url": "/api/keys/me"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[10:25:15.412] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 204,
+      "method": "GET",
+      "url": "/api/keys/me"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 157
+[10:25:16.307] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 205,
+      "method": "OPTIONS",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[10:25:16.992] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 206,
+      "method": "GET",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 670
+[14:46:16.932] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 207,
+      "method": "OPTIONS",
+      "url": "/api/teammates/sync-user"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 26
+[14:46:18.564] [32mINFO[39m (38080): [36mrequest aborted[39m
+    [35mreq[39m: {
+      "id": 208,
+      "method": "POST",
+      "url": "/api/teammates/sync-user"
+    }
+    [35mres[39m: {
+      "statusCode": null
+    }
+    [35mresponseTime[39m: 1622
+[14:46:27.837] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 209,
+      "method": "OPTIONS",
+      "url": "/api/teammates/sync-user"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 2
+[14:46:28.832] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 211,
+      "method": "OPTIONS",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 2
+[14:46:29.465] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 210,
+      "method": "POST",
+      "url": "/api/teammates/sync-user"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 1625
+[14:46:29.477] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 213,
+      "method": "OPTIONS",
+      "url": "/api/keys/me"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 2
+[14:46:30.108] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 214,
+      "method": "GET",
+      "url": "/api/keys/me"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 624
+[14:46:32.922] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 212,
+      "method": "GET",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 4078
+[14:47:09.554] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 215,
+      "method": "OPTIONS",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[14:47:10.740] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 216,
+      "method": "GET",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 1184
+[14:47:13.627] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 217,
+      "method": "GET",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 721
+[14:47:21.300] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 218,
+      "method": "OPTIONS",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[14:47:21.854] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 219,
+      "method": "GET",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 525
+[14:47:23.137] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 221,
+      "method": "OPTIONS",
+      "url": "/api/teammates/list"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[14:47:23.692] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 220,
+      "method": "GET",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 565
+[14:47:24.225] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 222,
+      "method": "GET",
+      "url": "/api/teammates/list"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 1083
+[14:47:28.397] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 223,
+      "method": "OPTIONS",
+      "url": "/api/keys/me"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[14:47:28.401] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 225,
+      "method": "OPTIONS",
+      "url": "/api/keys/teammates/user_3HfhuY7wNSZhklBJ1pcGgqIqtTm"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[14:47:28.543] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 224,
+      "method": "GET",
+      "url": "/api/keys/me"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 143
+[14:47:28.733] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 226,
+      "method": "GET",
+      "url": "/api/keys/teammates/user_3HfhuY7wNSZhklBJ1pcGgqIqtTm"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 330
+[14:47:28.758] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 227,
+      "method": "OPTIONS",
+      "url": "/api/files/e0abfa3e-8ea5-4451-b0f8-4c35a52aac97/share"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[14:47:29.762] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 228,
+      "method": "POST",
+      "url": "/api/files/e0abfa3e-8ea5-4451-b0f8-4c35a52aac97/share"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 1003
+[14:47:46.890] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 229,
+      "method": "OPTIONS",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[14:47:53.655] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 230,
+      "method": "GET",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 6763
+[14:47:55.298] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 231,
+      "method": "OPTIONS",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[14:47:55.794] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 232,
+      "method": "GET",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 495
+[14:52:46.725] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 233,
+      "method": "OPTIONS",
+      "url": "/api/teammates/sync-user"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 7
+[14:52:47.567] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 235,
+      "method": "OPTIONS",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[14:52:49.771] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 234,
+      "method": "POST",
+      "url": "/api/teammates/sync-user"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 3043
+[14:52:49.781] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 237,
+      "method": "OPTIONS",
+      "url": "/api/keys/me"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[14:52:50.192] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 238,
+      "method": "GET",
+      "url": "/api/keys/me"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 408
+[14:52:50.930] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 236,
+      "method": "GET",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 3350
+[14:52:55.541] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 239,
+      "method": "OPTIONS",
+      "url": "/api/teammates/list"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[14:52:56.972] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 240,
+      "method": "GET",
+      "url": "/api/teammates/list"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 1427
+[14:52:56.976] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 241,
+      "method": "OPTIONS",
+      "url": "/api/teammates/invitations/pending"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[14:52:58.404] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 242,
+      "method": "GET",
+      "url": "/api/teammates/invitations/pending"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 1425
+[14:53:27.423] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 243,
+      "method": "OPTIONS",
+      "url": "/api/teammates/invite"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[14:53:39.193] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 244,
+      "method": "POST",
+      "url": "/api/teammates/invite"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 11767
+[14:55:04.948] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 245,
+      "method": "OPTIONS",
+      "url": "/api/teammates/sync-user"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 12
+[14:55:04.984] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 247,
+      "method": "OPTIONS",
+      "url": "/api/teammates/sync-user"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[14:55:06.074] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 248,
+      "method": "POST",
+      "url": "/api/teammates/sync-user"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 1086
+[14:55:06.079] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 249,
+      "method": "OPTIONS",
+      "url": "/api/keys/me"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[14:55:06.099] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 246,
+      "method": "POST",
+      "url": "/api/teammates/sync-user"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 1146
+[14:55:06.102] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 251,
+      "method": "OPTIONS",
+      "url": "/api/teammates/accept"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[14:55:06.224] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 250,
+      "method": "GET",
+      "url": "/api/keys/me"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 143
+[14:55:06.414] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 252,
+      "method": "POST",
+      "url": "/api/teammates/accept"
+    }
+    [35mres[39m: {
+      "statusCode": 403
+    }
+    [35mresponseTime[39m: 311
+[14:56:14.091] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 253,
+      "method": "OPTIONS",
+      "url": "/api/teammates/sync-user"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 11
+[14:56:15.242] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 254,
+      "method": "POST",
+      "url": "/api/teammates/sync-user"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 1147
+[14:56:15.250] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 255,
+      "method": "OPTIONS",
+      "url": "/api/keys/me"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 2
+[14:56:15.387] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 256,
+      "method": "GET",
+      "url": "/api/keys/me"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 134
+[14:58:56.258] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 257,
+      "method": "OPTIONS",
+      "url": "/api/teammates/sync-user"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 5
+[14:58:57.883] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 258,
+      "method": "POST",
+      "url": "/api/teammates/sync-user"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 1623
+[14:58:57.887] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 260,
+      "method": "OPTIONS",
+      "url": "/api/keys/me"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[14:58:57.999] [32mINFO[39m (38080): [36mrequest errored[39m
+    [35mreq[39m: {
+      "id": 259,
+      "method": "POST",
+      "url": "/api/teammates/sync-user"
+    }
+    [35mres[39m: {
+      "statusCode": 500
+    }
+    [35mresponseTime[39m: 1324
+    err: {
+      "type": "Error",
+      "message": "failed with status code 500",
+      "stack":
+          Error: failed with status code 500
+              at onResFinished (C:\Users\priya\Downloads\Finalyear_new\node_modules\.pnpm\pino-http@10.5.0\node_modules\pino-http\logger.js:115:39)
+              at ServerResponse.onResponseComplete (C:\Users\priya\Downloads\Finalyear_new\node_modules\.pnpm\pino-http@10.5.0\node_modules\pino-http\logger.js:178:14)
+              at ServerResponse.emit (node:events:520:35)
+              at onFinish (node:_http_outgoing:1024:10)
+              at callback (node:internal/streams/writable:764:21)
+              at afterWrite (node:internal/streams/writable:708:5)
+              at afterWriteTick (node:internal/streams/writable:694:10)
+              at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+    }
+[14:58:58.007] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 262,
+      "method": "OPTIONS",
+      "url": "/api/teammates/accept"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[14:58:58.027] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 261,
+      "method": "GET",
+      "url": "/api/keys/me"
+    }
+    [35mres[39m: {
+      "statusCode": 404
+    }
+    [35mresponseTime[39m: 138
+[14:58:58.040] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 264,
+      "method": "OPTIONS",
+      "url": "/api/keys/register"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[14:58:58.311] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 265,
+      "method": "POST",
+      "url": "/api/keys/register"
+    }
+    [35mres[39m: {
+      "statusCode": 201
+    }
+    [35mresponseTime[39m: 270
+[14:58:59.342] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 263,
+      "method": "POST",
+      "url": "/api/teammates/accept"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 1333
+[14:59:01.583] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 266,
+      "method": "OPTIONS",
+      "url": "/api/teammates/list"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[14:59:01.863] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 267,
+      "method": "GET",
+      "url": "/api/teammates/list"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 277
+[14:59:01.867] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 268,
+      "method": "OPTIONS",
+      "url": "/api/teammates/invitations/pending"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[14:59:02.128] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 269,
+      "method": "GET",
+      "url": "/api/teammates/invitations/pending"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 259
+[14:59:12.682] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 270,
+      "method": "OPTIONS",
+      "url": "/api/teammates/sync-user"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[14:59:13.673] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 271,
+      "method": "POST",
+      "url": "/api/teammates/sync-user"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 990
+[14:59:13.677] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 272,
+      "method": "OPTIONS",
+      "url": "/api/keys/me"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[14:59:13.819] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 273,
+      "method": "GET",
+      "url": "/api/keys/me"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 141
+[14:59:22.524] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 274,
+      "method": "OPTIONS",
+      "url": "/api/teammates/sync-user"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[14:59:22.954] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 275,
+      "method": "POST",
+      "url": "/api/teammates/sync-user"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 427
+[14:59:22.960] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 276,
+      "method": "OPTIONS",
+      "url": "/api/keys/me"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[14:59:23.108] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 277,
+      "method": "GET",
+      "url": "/api/keys/me"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 144
+[14:59:29.334] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 278,
+      "method": "OPTIONS",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[14:59:29.341] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 279,
+      "method": "OPTIONS",
+      "url": "/api/teammates/list"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[14:59:29.668] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 280,
+      "method": "GET",
+      "url": "/api/teammates/list"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 324
+[14:59:31.548] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 281,
+      "method": "GET",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 2202
+[14:59:35.374] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 282,
+      "method": "OPTIONS",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[14:59:35.778] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 283,
+      "method": "GET",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 398
+[14:59:45.632] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 284,
+      "method": "OPTIONS",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[14:59:45.639] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 285,
+      "method": "OPTIONS",
+      "url": "/api/teammates/list"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[14:59:46.041] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 286,
+      "method": "GET",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 400
+[14:59:46.432] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 287,
+      "method": "GET",
+      "url": "/api/teammates/list"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 790
+[14:59:50.720] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 288,
+      "method": "GET",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 518
+[14:59:56.876] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 289,
+      "method": "OPTIONS",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[14:59:57.271] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 290,
+      "method": "GET",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 393
+[15:00:17.840] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 291,
+      "method": "OPTIONS",
+      "url": "/api/keys/me"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[15:00:18.568] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 292,
+      "method": "GET",
+      "url": "/api/keys/me"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 726
+[15:00:19.830] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 293,
+      "method": "OPTIONS",
+      "url": "/api/files/upload"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[15:00:20.057] [32mINFO[39m (38080): [36mUploading encrypted object to Storage[39m
+    [35mstage[39m: "storage-upload"
+    [35mbucket[39m: "secure-files"
+    [35mpath[39m: "user_3HqY7MZ7hfXfMaAp027zXWuDhWv/9628bf61-e549-474d-bae6-5359c30b175d.enc"
+    [35mciphertextBytes[39m: 570643
+    [35mcontentType[39m: "application/octet-stream"
+[15:00:23.250] [32mINFO[39m (38080): [36mEncrypted upload and blind index committed[39m
+    [35mfileId[39m: "ee052349-2799-4c45-af94-9aa03c07097c"
+    [35mindexedTokenCount[39m: 316
+[15:00:23.250] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 294,
+      "method": "POST",
+      "url": "/api/files/upload"
+    }
+    [35mres[39m: {
+      "statusCode": 201
+    }
+    [35mresponseTime[39m: 3416
+[15:00:32.698] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 295,
+      "method": "OPTIONS",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[15:00:33.132] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 296,
+      "method": "GET",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 427
+[15:00:39.701] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 297,
+      "method": "OPTIONS",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[15:00:40.149] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 298,
+      "method": "GET",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 426
+[15:00:41.829] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 299,
+      "method": "OPTIONS",
+      "url": "/api/teammates/list"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[15:00:42.255] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 300,
+      "method": "GET",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 425
+[15:00:42.654] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 301,
+      "method": "GET",
+      "url": "/api/teammates/list"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 816
+[15:00:46.935] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 302,
+      "method": "OPTIONS",
+      "url": "/api/keys/me"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[15:00:46.936] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 303,
+      "method": "OPTIONS",
+      "url": "/api/keys/teammates/user_3J0KZYrPnqvHh0F1nm0o4GQ2X8u"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[15:00:47.092] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 305,
+      "method": "GET",
+      "url": "/api/keys/me"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 145
+[15:00:47.208] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 304,
+      "method": "GET",
+      "url": "/api/keys/teammates/user_3J0KZYrPnqvHh0F1nm0o4GQ2X8u"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 263
+[15:00:47.217] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 306,
+      "method": "OPTIONS",
+      "url": "/api/files/ee052349-2799-4c45-af94-9aa03c07097c/share"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[15:00:47.868] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 307,
+      "method": "POST",
+      "url": "/api/files/ee052349-2799-4c45-af94-9aa03c07097c/share"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 649
+[15:00:55.623] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 308,
+      "method": "OPTIONS",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[15:00:56.016] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 309,
+      "method": "GET",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 390
+[15:01:08.060] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 310,
+      "method": "OPTIONS",
+      "url": "/api/teammates/sync-user"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[15:01:08.561] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 312,
+      "method": "OPTIONS",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[15:01:08.999] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 311,
+      "method": "POST",
+      "url": "/api/teammates/sync-user"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 938
+[15:01:09.002] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 314,
+      "method": "OPTIONS",
+      "url": "/api/keys/me"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[15:01:09.138] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 315,
+      "method": "GET",
+      "url": "/api/keys/me"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 134
+[15:01:09.529] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 313,
+      "method": "GET",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 950
+[15:01:26.758] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 316,
+      "method": "OPTIONS",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[15:01:27.838] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 317,
+      "method": "GET",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 1078
+[15:01:29.839] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 318,
+      "method": "OPTIONS",
+      "url": "/api/files/e0abfa3e-8ea5-4451-b0f8-4c35a52aac97"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[15:01:30.160] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 319,
+      "method": "GET",
+      "url": "/api/files/e0abfa3e-8ea5-4451-b0f8-4c35a52aac97"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 311
+[15:01:35.395] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 320,
+      "method": "OPTIONS",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[15:01:35.877] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 321,
+      "method": "GET",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 476
+[15:01:39.343] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 322,
+      "method": "OPTIONS",
+      "url": "/api/files/ee052349-2799-4c45-af94-9aa03c07097c"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[15:01:39.830] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 323,
+      "method": "GET",
+      "url": "/api/files/ee052349-2799-4c45-af94-9aa03c07097c"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 480
+[15:01:41.482] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 324,
+      "method": "OPTIONS",
+      "url": "/api/files/ee052349-2799-4c45-af94-9aa03c07097c/key-share"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[15:01:41.959] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 325,
+      "method": "GET",
+      "url": "/api/files/ee052349-2799-4c45-af94-9aa03c07097c/key-share"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 475
+[15:01:41.967] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 326,
+      "method": "OPTIONS",
+      "url": "/api/files/ee052349-2799-4c45-af94-9aa03c07097c/content"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[15:01:44.558] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 327,
+      "method": "GET",
+      "url": "/api/files/ee052349-2799-4c45-af94-9aa03c07097c/content"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 2589
+[15:02:00.872] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 328,
+      "method": "OPTIONS",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[15:02:01.951] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 329,
+      "method": "GET",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 1056
+[15:04:11.168] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 330,
+      "method": "OPTIONS",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 11
+[15:04:13.199] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 331,
+      "method": "GET",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 2026
+[15:04:16.352] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 332,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[15:04:16.508] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 333,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 154
+[15:04:25.537] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 334,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[15:04:25.674] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 335,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 135
+[15:09:27.835] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 336,
+      "method": "OPTIONS",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 17
+[15:09:29.667] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 337,
+      "method": "GET",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 1827
+[15:13:07.640] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 338,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[15:13:08.839] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 3
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[15:13:08.840] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 339,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 1198
+[15:13:09.546] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 341,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 785
+[15:13:09.666] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 340,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 1468
+[15:13:09.667] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 1
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[15:13:09.668] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 342,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 424
+[15:13:12.596] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 343,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 154
+[15:13:29.630] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 344,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[15:13:30.581] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 3
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[15:13:30.582] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 345,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 950
+[15:13:30.743] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 347,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 146
+[15:13:31.021] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 3
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[15:13:31.022] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 346,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 1121
+[15:13:31.172] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 348,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 164
+[15:13:31.482] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 349,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 156
+[15:13:31.787] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 350,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 190
+[15:13:37.202] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 351,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[15:13:37.338] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 352,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 134
+[15:13:39.051] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 353,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 136
+[15:13:42.446] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 354,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[15:13:42.585] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 355,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 137
+[15:33:45.559] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 356,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 22
+[15:33:47.208] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 358,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 1247
+[15:33:47.292] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 359,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 738
+[15:33:47.336] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "OR"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 3
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[15:33:47.338] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 357,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 1773
+[15:33:47.759] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 360,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 187
+[15:33:48.096] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 361,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 143
+[15:33:48.649] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "OR"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 1
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[15:33:48.651] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 362,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 261
+[15:33:50.598] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 363,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[15:33:50.731] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 364,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 131
+[15:34:42.234] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 365,
+      "method": "OPTIONS",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[15:34:43.188] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 366,
+      "method": "GET",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 949
+[15:34:45.671] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 368,
+      "method": "OPTIONS",
+      "url": "/api/teammates/list"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[15:34:46.076] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 367,
+      "method": "GET",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 413
+[15:34:46.482] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 369,
+      "method": "GET",
+      "url": "/api/teammates/list"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 803
+[15:35:25.495] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 370,
+      "method": "OPTIONS",
+      "url": "/api/keys/me"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[15:35:25.496] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 371,
+      "method": "OPTIONS",
+      "url": "/api/keys/teammates/user_3HqY7MZ7hfXfMaAp027zXWuDhWv"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[15:35:26.228] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 373,
+      "method": "GET",
+      "url": "/api/keys/me"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 721
+[15:35:26.317] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 372,
+      "method": "GET",
+      "url": "/api/keys/teammates/user_3HqY7MZ7hfXfMaAp027zXWuDhWv"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 813
+[15:35:26.336] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 374,
+      "method": "OPTIONS",
+      "url": "/api/files/649799b7-5248-41a3-8f97-6dad5668c984/share"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[15:35:27.017] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 375,
+      "method": "POST",
+      "url": "/api/files/649799b7-5248-41a3-8f97-6dad5668c984/share"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 678
+[15:35:40.740] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 376,
+      "method": "OPTIONS",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 5
+[15:35:41.701] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 377,
+      "method": "GET",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 954
+[15:36:12.313] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 378,
+      "method": "OPTIONS",
+      "url": "/api/teammates/sync-user"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[15:36:12.865] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 380,
+      "method": "OPTIONS",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[15:36:13.416] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 379,
+      "method": "POST",
+      "url": "/api/teammates/sync-user"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 1094
+[15:36:13.422] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 382,
+      "method": "OPTIONS",
+      "url": "/api/keys/me"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[15:36:13.553] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 383,
+      "method": "GET",
+      "url": "/api/keys/me"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 128
+[15:36:13.805] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 381,
+      "method": "GET",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 934
+[15:36:19.931] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 384,
+      "method": "OPTIONS",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[15:36:20.440] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 385,
+      "method": "GET",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 505
+[15:36:29.882] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 386,
+      "method": "OPTIONS",
+      "url": "/api/files/649799b7-5248-41a3-8f97-6dad5668c984"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[15:36:30.767] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 387,
+      "method": "GET",
+      "url": "/api/files/649799b7-5248-41a3-8f97-6dad5668c984"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 881
+[15:36:32.951] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 388,
+      "method": "OPTIONS",
+      "url": "/api/files/649799b7-5248-41a3-8f97-6dad5668c984/key-share"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[15:36:33.571] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 389,
+      "method": "GET",
+      "url": "/api/files/649799b7-5248-41a3-8f97-6dad5668c984/key-share"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 614
+[15:36:33.584] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 390,
+      "method": "OPTIONS",
+      "url": "/api/files/649799b7-5248-41a3-8f97-6dad5668c984/content"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[15:36:35.927] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 391,
+      "method": "GET",
+      "url": "/api/files/649799b7-5248-41a3-8f97-6dad5668c984/content"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 2341
+[15:36:52.387] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 392,
+      "method": "OPTIONS",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[15:36:53.495] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 393,
+      "method": "GET",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 1091
+[15:36:53.599] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 394,
+      "method": "OPTIONS",
+      "url": "/api/files/649799b7-5248-41a3-8f97-6dad5668c984"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[15:36:54.086] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 395,
+      "method": "GET",
+      "url": "/api/files/649799b7-5248-41a3-8f97-6dad5668c984"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 477
+[15:36:56.002] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 396,
+      "method": "GET",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 518
+[15:36:59.468] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 397,
+      "method": "OPTIONS",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[15:36:59.905] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 398,
+      "method": "GET",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 432
+[15:39:20.037] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 399,
+      "method": "OPTIONS",
+      "url": "/api/teammates/sync-user"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[15:39:20.772] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 401,
+      "method": "OPTIONS",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[15:39:21.557] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 400,
+      "method": "POST",
+      "url": "/api/teammates/sync-user"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 1517
+[15:39:21.562] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 403,
+      "method": "OPTIONS",
+      "url": "/api/keys/me"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[15:39:21.713] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 404,
+      "method": "GET",
+      "url": "/api/keys/me"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 148
+[15:39:21.836] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 402,
+      "method": "GET",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 1060
+[15:39:23.543] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 405,
+      "method": "GET",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 441
+[15:39:58.985] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 406,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[15:39:59.797] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 3
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[15:39:59.799] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 407,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 812
+[15:40:00.414] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 1
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[15:40:00.416] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 409,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 273
+[15:40:00.487] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 408,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 871
+[15:40:00.920] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 410,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 146
+[15:40:01.432] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 411,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 145
+[15:40:01.718] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 412,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 146
+[15:40:02.156] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 1
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[15:40:02.157] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 413,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 285
+[19:39:02.692] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 414,
+      "method": "OPTIONS",
+      "url": "/api/teammates/sync-user"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 11
+[19:39:05.649] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 415,
+      "method": "POST",
+      "url": "/api/teammates/sync-user"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 2952
+[19:39:05.797] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 416,
+      "method": "OPTIONS",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[19:39:05.813] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 417,
+      "method": "OPTIONS",
+      "url": "/api/keys/me"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[19:39:06.315] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 418,
+      "method": "GET",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 493
+[19:39:06.587] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 419,
+      "method": "GET",
+      "url": "/api/keys/me"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 763
+[19:39:13.416] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 420,
+      "method": "OPTIONS",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[19:39:14.107] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 421,
+      "method": "GET",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 682
+[19:39:18.597] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 422,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[19:39:18.780] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 423,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 181
+[19:39:19.068] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 424,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 186
+[19:39:19.531] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 425,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 172
+[19:39:20.761] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 426,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 214
+[19:39:21.360] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 1
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[19:39:21.362] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 427,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 351
+[19:39:30.046] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 428,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[19:39:30.220] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 429,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 171
+[19:39:32.157] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 3
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[19:39:32.158] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 430,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 534
+[19:39:32.606] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 432,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 177
+[19:39:33.034] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 431,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 894
+[19:39:33.507] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 433,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 172
+[19:39:33.776] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 434,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 166
+[19:39:40.453] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 435,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[19:39:40.609] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 436,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 153
+[19:39:46.216] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 437,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[19:39:46.721] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 3
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[19:39:46.722] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 438,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 503
+[19:39:47.615] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 1
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[19:39:47.616] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 439,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 506
+[19:39:49.902] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 440,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 185
+[19:39:52.509] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 441,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[19:39:53.082] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 1
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[19:39:53.082] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 442,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 571
+[19:39:55.231] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 443,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 206
+[19:40:03.286] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 444,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[19:40:03.582] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 445,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 293
+[19:40:09.238] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 446,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[19:40:09.437] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 447,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 196
+[19:40:11.073] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 448,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 186
+[19:55:30.651] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 449,
+      "method": "OPTIONS",
+      "url": "/api/teammates/sync-user"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 12
+[19:55:33.490] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 451,
+      "method": "OPTIONS",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[19:55:34.405] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 450,
+      "method": "POST",
+      "url": "/api/teammates/sync-user"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 3751
+[19:55:34.410] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 453,
+      "method": "OPTIONS",
+      "url": "/api/keys/me"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[19:55:34.671] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 454,
+      "method": "GET",
+      "url": "/api/keys/me"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 258
+[19:55:35.146] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 452,
+      "method": "GET",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 1650
+[19:56:50.954] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 455,
+      "method": "OPTIONS",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[19:56:53.696] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 456,
+      "method": "GET",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 2738
+[19:56:57.578] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 457,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[19:56:58.280] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 3
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[19:56:58.282] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 458,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 700
+[19:57:00.103] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 1
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[19:57:00.104] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 459,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 635
+[19:57:00.358] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 460,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 212
+[19:57:04.530] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 461,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[19:57:05.064] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 1
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[19:57:05.066] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 462,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 534
+[19:57:29.705] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 463,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[19:57:31.387] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 2
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[19:57:31.387] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 465,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 1384
+[19:57:31.420] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 3
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[19:57:31.421] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 464,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 1714
+[19:57:31.586] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 466,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 1237
+[19:57:32.351] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 467,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 1011
+[20:07:27.334] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 468,
+      "method": "OPTIONS",
+      "url": "/api/teammates/sync-user"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 8
+[20:07:29.616] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 469,
+      "method": "POST",
+      "url": "/api/teammates/sync-user"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 2280
+[20:07:29.623] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 470,
+      "method": "OPTIONS",
+      "url": "/api/keys/me"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[20:07:29.830] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 471,
+      "method": "GET",
+      "url": "/api/keys/me"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 202
+[20:07:39.908] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 472,
+      "method": "OPTIONS",
+      "url": "/api/teammates/sync-user"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[20:07:40.932] [32mINFO[39m (38080): [36mrequest aborted[39m
+    [35mreq[39m: {
+      "id": 473,
+      "method": "POST",
+      "url": "/api/teammates/sync-user"
+    }
+    [35mres[39m: {
+      "statusCode": null
+    }
+    [35mresponseTime[39m: 1021
+[20:07:50.603] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 474,
+      "method": "OPTIONS",
+      "url": "/api/teammates/sync-user"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[20:07:51.040] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 475,
+      "method": "POST",
+      "url": "/api/teammates/sync-user"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 433
+[20:07:51.049] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 476,
+      "method": "OPTIONS",
+      "url": "/api/keys/me"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[20:07:51.219] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 477,
+      "method": "GET",
+      "url": "/api/keys/me"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 150
+[20:07:51.285] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 478,
+      "method": "OPTIONS",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[20:07:51.958] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 479,
+      "method": "GET",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 658
+[20:08:03.781] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 480,
+      "method": "OPTIONS",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[20:08:04.952] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 481,
+      "method": "GET",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 1162
+[20:08:06.660] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 482,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[20:08:07.041] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 1
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[20:08:07.042] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 483,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 378
+[20:08:08.444] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 484,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 1509
+[20:08:12.054] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 487,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[20:08:13.105] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 3
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[20:08:13.106] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 485,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 2174
+[20:08:13.727] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 1
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[20:08:13.728] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 486,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 2251
+[20:08:18.080] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 491,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[20:08:18.947] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 490,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 2712
+[20:08:19.355] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 489,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 4559
+[20:08:22.202] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 492,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 4120
+[20:08:22.522] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 488,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 10464
+[20:08:54.333] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 493,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[20:08:56.442] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 4
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[20:08:56.443] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 494,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 2108
+[20:08:56.451] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 495,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 1597
+[20:08:58.364] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 496,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 892
+[20:08:59.446] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 499,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[20:08:59.482] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 497,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 1197
+[20:08:59.682] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 498,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 822
+[20:09:02.752] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 500,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 3304
+[20:12:47.483] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 501,
+      "method": "OPTIONS",
+      "url": "/api/teammates/sync-user"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 14
+[20:12:49.423] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 502,
+      "method": "POST",
+      "url": "/api/teammates/sync-user"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 1935
+[20:12:49.430] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 503,
+      "method": "OPTIONS",
+      "url": "/api/keys/me"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[20:12:49.576] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 504,
+      "method": "GET",
+      "url": "/api/keys/me"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 141
+[20:12:50.301] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 505,
+      "method": "OPTIONS",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[20:12:50.943] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 506,
+      "method": "GET",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 633
+[20:13:41.561] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 507,
+      "method": "OPTIONS",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[20:13:42.684] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 508,
+      "method": "GET",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 1111
+[20:13:44.756] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 509,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[20:13:45.119] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 3
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[20:13:45.120] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 510,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 317
+[20:13:45.461] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 511,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 178
+[20:13:49.496] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 3
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[20:13:49.497] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 512,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 496
+[20:13:49.823] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 513,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 142
+[20:13:52.652] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 514,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[20:13:52.990] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 515,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 336
+[20:13:53.659] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 516,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 163
+[20:13:53.961] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 517,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 153
+[20:13:54.709] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 1
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[20:13:54.709] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 518,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 346
+[20:23:15.909] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 519,
+      "method": "OPTIONS",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 19
+[20:23:16.775] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 521,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[20:23:18.778] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 1
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[20:23:18.783] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 522,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 2005
+[20:23:18.909] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 520,
+      "method": "GET",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 2988
+[20:23:24.214] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 523,
+      "method": "OPTIONS",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[20:23:24.674] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 524,
+      "method": "GET",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 450
+[20:23:24.733] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 525,
+      "method": "OPTIONS",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[20:23:25.070] [32mINFO[39m (38080): [36mEncrypted search completed[39m
+    [35mstage[39m: "search-response"
+    [35mmode[39m: "AND"
+    [35msubmittedTokenCount[39m: 1
+    [35mmatchedFileCount[39m: 1
+    [35mpage[39m: 0
+    [35mnextPage[39m: null
+[20:23:25.071] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 526,
+      "method": "POST",
+      "url": "/api/files/search"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 336
+[20:34:14.883] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 527,
+      "method": "OPTIONS",
+      "url": "/api/teammates/sync-user"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 9
+[20:34:17.304] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 528,
+      "method": "POST",
+      "url": "/api/teammates/sync-user"
+    }
+    [35mres[39m: {
+      "statusCode": 200
+    }
+    [35mresponseTime[39m: 2418
+[20:34:17.332] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 529,
+      "method": "OPTIONS",
+      "url": "/api/keys/me"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[20:34:17.580] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 530,
+      "method": "GET",
+      "url": "/api/keys/me"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 245
+[20:34:17.677] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 531,
+      "method": "OPTIONS",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[20:34:18.667] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 532,
+      "method": "GET",
+      "url": "/api/files"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 986
+[20:35:22.594] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 533,
+      "method": "OPTIONS",
+      "url": "/api/keys/me"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 0
+[20:35:23.591] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 534,
+      "method": "GET",
+      "url": "/api/keys/me"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 993
+[20:36:45.608] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 535,
+      "method": "OPTIONS",
+      "url": "/api/keys/me"
+    }
+    [35mres[39m: {
+      "statusCode": 204
+    }
+    [35mresponseTime[39m: 1
+[20:36:48.064] [32mINFO[39m (38080): [36mrequest completed[39m
+    [35mreq[39m: {
+      "id": 536,
+      "method": "GET",
+      "url": "/api/keys/me"
+    }
+    [35mres[39m: {
+      "statusCode": 304
+    }
+    [35mresponseTime[39m: 2452

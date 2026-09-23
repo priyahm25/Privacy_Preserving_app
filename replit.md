@@ -16,14 +16,14 @@ There are **two**, and the split is a security boundary, not a convention:
 
 | File | Read by | Contents |
 |---|---|---|
-| `.env` (repo root) | API server, drizzle-kit | Every secret: `DATABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `CLERK_SECRET_KEY` (`sk_`), `FILE_ENCRYPTION_KEY`, SMTP |
+| `.env` (repo root) | API server, drizzle-kit | Server secrets: `DATABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `CLERK_SECRET_KEY` (`sk_`), SMTP |
 | `artifacts/securesphere/.env` | Expo | Only `EXPO_PUBLIC_*` — bundled into the app, so readable by anyone who installs it |
 
 Copy each from the `.env.example` beside it. Both are gitignored; the `.env.example` files are committed, so never put real values in those.
 
 Loading is via Node's native `--env-file-if-exists`, wired into the `start` and `push` scripts — there is no `dotenv` dependency. On Replit the file is absent and Replit Secrets supply the same variables, which is why the flag is the "if-exists" variant.
 
-Minimum to boot: `DATABASE_URL`, `CLERK_SECRET_KEY`, `FILE_ENCRYPTION_KEY`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`.
+Minimum to boot: `DATABASE_URL`, `CLERK_SECRET_KEY`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`.
 
 ## Stack
 
@@ -48,7 +48,8 @@ Minimum to boot: `DATABASE_URL`, `CLERK_SECRET_KEY`, `FILE_ENCRYPTION_KEY`, `SUP
 
 ## Architecture decisions
 
-- **Scan before encrypt, encrypt before upload, upload before record.** `POST /api/files/share` runs those steps in that order in one request. A flagged file is never encrypted, never uploaded, and never recorded. The ordering is forced: the AI layer needs plaintext to judge, so encryption cannot come first — which is exactly why the scan runs in our API and not anywhere Supabase can observe.
+- **Client-side scan before encrypt, then ciphertext upload before record.** `POST /api/files/upload` receives only ciphertext, an IV, scan metadata, and blind-index tokens. The retired `POST /api/files/share` plaintext upload endpoint returns `410 Gone` and must not be used.
+- **Current privacy boundary.** Client-side LightGBM scanning, AES-256-GCM encryption, HMAC blind-index generation, and decryption handle plaintext only on the device. The API authorizes and stores/proxies ciphertext; it does not hold `FILE_ENCRYPTION_KEY`, decrypt files, or run the legacy server scanner. See `SECURE_SEARCH.md` for the exact searchable-encryption scope and leakage.
 - **The scan has two stages and degrades safely.** `src/lib/scanHeuristics.ts` is dependency-free and always runs (extensions, magic bytes, content patterns); `src/lib/spamScanner.ts` adds a Claude pass over the real content. If the model is unreachable the upload falls back to the heuristic verdict rather than failing, and the response says the deep scan did not run.
 - **Supabase holds ciphertext and metadata; it never holds a key or a plaintext.** `src/lib/supabaseStorage.ts` is the only place bytes leave the process, and by contract everything through it is already AES-256-GCM output. `FILE_ENCRYPTION_KEY` lives solely in the API server's environment. Object keys are random UUIDs under an owner prefix — never derived from the filename — and objects are uploaded as `application/octet-stream`, so a bucket listing reveals nothing about what a file is or contains.
 - **Decryption only ever happens in the API, after an access check.** No public or signed Storage URL is issued, so there is no path for a client to read the bucket directly. The GCM auth tag is appended to the stored blob (the `files` table has an `iv` column but no tag column), and the IV stays in the row — so recovering a file needs the object, the row, *and* the key.

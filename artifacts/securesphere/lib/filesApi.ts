@@ -54,6 +54,11 @@ export interface FileDetailsResponse {
   sharedWith: ShareRecipient[];
 }
 
+export interface SearchFilesResponse {
+  files: SecureFileRecord[];
+  nextPage: number | null;
+}
+
 export function formatBytes(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
@@ -115,6 +120,12 @@ export function useFilesApi() {
     if (!response.ok) throw new Error(`Failed to download ciphertext (${response.status}).`);
     return new Uint8Array(await response.arrayBuffer());
   };
+  const searchFiles = async (tokens: string[], mode: "AND" | "OR", page = 0, pageSize = 25): Promise<SearchFilesResponse> => {
+    const response = await request("/api/files/search", { method: "POST", body: JSON.stringify({ tokens, mode, page, pageSize }) });
+    if (!response.ok) throw new Error(`Failed to search files (${response.status}).`);
+    const data = await response.json();
+    return { files: data.files ?? [], nextPage: typeof data.nextPage === "number" ? data.nextPage : null };
+  };
   const deleteFile = async (id: string): Promise<boolean> => (await request(`/api/files/${id}`, { method: "DELETE" })).ok;
-  return { listFiles, getFile, listTeammates, getMyDeviceKey, getTeammateDeviceKey, createSecureShare, getKeyShare, downloadCiphertext, deleteFile };
+  return { listFiles, getFile, listTeammates, getMyDeviceKey, getTeammateDeviceKey, createSecureShare, getKeyShare, downloadCiphertext, searchFiles, deleteFile };
 }

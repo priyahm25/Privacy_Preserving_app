@@ -20,9 +20,14 @@ import Animated, {
 import { useColors } from "@/hooks/useColors";
 import * as Haptics from "expo-haptics";
 import * as DocumentPicker from "expo-document-picker";
-import { scanFile, SupportedFileType } from "@/lib/scanning/scanner";
+import * as Crypto from "expo-crypto";
+import { scanFile, ScanResult } from "@/lib/scanning/scanner";
 import { encryptFileData, storeKeySecurely } from "@/lib/encryption";
+import { provisionDeviceKey } from "@/lib/deviceKeys";
+import { createDocumentSearchTokens, extractSearchableText, prepareDocumentSearchTerms } from "@/lib/searchIndex";
+import { extractPdfText, PdfTextExtractionError } from "@/lib/pdfTextExtractor";
 import { useAuthenticatedApi } from "@/lib/authenticatedApi";
+import { useUser } from "@clerk/expo";
 
 type UploadState =
   | "idle"
@@ -40,6 +45,7 @@ export default function Upload() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
   const api = useAuthenticatedApi();
+  const { user } = useUser();
 
   const [state, setState] = useState<UploadState>("idle");
   const [selectedFile, setSelectedFile] = useState<{
@@ -148,11 +154,14 @@ export default function Upload() {
     setState("scan_complete");
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 
-    // Proceed to encryption
-    setTimeout(encryptAndUpload, 1500);
+    // Pass the result directly. State updates are asynchronous, and the
+    // delayed callback previously captured the old null scanResult value.
+    setTimeout(() => {
+      void encryptAndUpload(result);
+    }, 1500);
   };
 
-  const encryptAndUpload = async () => {
+  const encryptAndUpload = async (completedScan: ScanResult) => {
     if (!selectedFile) return;
 
     try {
@@ -164,8 +173,74 @@ export default function Upload() {
       const arrayBuffer = await blob.arrayBuffer();
       const plaintext = new Uint8Array(arrayBuffer);
 
-      // Encrypt locally
-      const { ciphertext, ivHex, keyHex } = encryptFileData(plaintext);
+      if (!user?.id) {
+        throw new Error("Your authenticated search key is unavailable. Please sign in again before uploading.");
+      }
+
+      // Provision synchronously here as well as at sign-in. This removes the
+      // first-run race where upload reached token generation before AppContext
+      // had finished registering the device public key.
+      await provisionDeviceKey(user.id, api.request);
+
+      const isPdf = selectedFile.name.toLowerCase().endsWith(".pdf") || selectedFile.mimeType === "application/pdf";
+      let pdfExtraction = null;
+      try {
+        pdfExtraction = isPdf ? await extractPdfText(plaintext) : null;
+      } catch (error) {
+        if (error instanceof PdfTextExtractionError) {
+          console.warn("PDF indexing unavailable", {
+            filename: selectedFile.name,
+            mimeType: selectedFile.mimeType ?? "unknown",
+            byteLength: plaintext.length,
+            extractionMethod: "pdfjs",
+            pdfjsSucceeded: false,
+          });
+          throw new Error("PDF text extraction failed. Please retry or use a different text-based PDF.");
+        }
+        throw error;
+      }
+      const searchableText = pdfExtraction
+        ? pdfExtraction.text
+        : extractSearchableText(plaintext, selectedFile.name, selectedFile.mimeType);
+      const normalizedTerms = pdfExtraction
+        ? prepareDocumentSearchTerms(searchableText)
+        : null;
+
+      // A parser can return font glyph bytes that are non-empty but cannot be
+      // tokenized into text. Treat that exactly like an image-only PDF: an
+      // empty blind index must never be uploaded as a successful PDF index.
+      if (isPdf && (!searchableText || normalizedTerms?.length === 0)) {
+        throw new Error("PDF has no extractable text; OCR is required.");
+      }
+
+      // Build the blind index from extracted local text, never from raw PDF
+      // bytes. Only the opaque HMAC output leaves this device.
+      const searchTokens = await createDocumentSearchTokens(
+        user.id,
+        searchableText,
+      );
+      if (pdfExtraction) {
+        console.info("PDF extraction", {
+          filename: selectedFile.name,
+          mimeType: selectedFile.mimeType ?? "unknown",
+          byteLength: plaintext.length,
+          pageCount: pdfExtraction.pageCount,
+          generatedTokenCount: searchTokens.length,
+          extractedTextLength: searchableText.length,
+          normalizedTermCount: normalizedTerms!.length,
+          extractionMethod: "pdfjs",
+          pdfjsSucceeded: true,
+        });
+      }
+
+       // Encrypt locally
+       const { ciphertext, ivHex, keyHex } = encryptFileData(plaintext);
+
+       // Reserve the database UUID locally and persist its key before any
+       // ciphertext leaves this device. If secure storage fails, no upload is
+       // attempted and therefore no unrecoverable server record can exist.
+       const fileId = Crypto.randomUUID();
+       await storeKeySecurely(fileId, keyHex);
 
       // Free plaintext
       plaintext.fill(0);
@@ -177,21 +252,31 @@ export default function Upload() {
           setState("uploading");
 
           // Only ciphertext goes to the backend
-          const formData = new FormData();
-          formData.append("filename", selectedFile.name);
+           const formData = new FormData();
+           formData.append("fileId", fileId);
+           formData.append("filename", selectedFile.name);
           formData.append(
             "mimeType",
             selectedFile.mimeType || "application/octet-stream",
           );
           formData.append("iv", ivHex);
-          formData.append("malwareScanResult", scanResult?.verdict || "SAFE");
+          // Unsupported types have no local ML model. They remain uploadable
+          // and searchable where supported, but are explicitly recorded as a
+          // zero-confidence local scan rather than being mislabelled as a
+          // malicious verdict.
+          formData.append(
+            "malwareScanResult",
+            completedScan.verdict === "UNSUPPORTED" ? "SAFE" : completedScan.verdict,
+          );
           formData.append(
             "malwareScanConfidence",
-            scanResult?.confidence.toString() || "0",
+            completedScan.confidence.toString(),
           );
+          formData.append("searchTokens", JSON.stringify(searchTokens));
 
           // Blob for ciphertext
-          const ctBlob = new Blob([new Uint8Array(ciphertext)], {
+          const cipherBuffer = ciphertext.slice().buffer as ArrayBuffer;
+          const ctBlob = new Blob([cipherBuffer], {
             type: "application/octet-stream",
           });
           formData.append("file", ctBlob as any, "encrypted.bin");
@@ -202,30 +287,29 @@ export default function Upload() {
           });
 
           if (!res.ok) {
-            throw new Error(`Upload failed: ${res.status}`);
+            const responseBody = await res.json().catch(() => null);
+            const reason =
+              responseBody &&
+              typeof responseBody === "object" &&
+              "error" in responseBody &&
+              typeof responseBody.error === "string"
+                ? responseBody.error
+                : `Upload failed (${res.status}).`;
+            throw new Error(reason);
           }
 
-          const data = await res.json();
+          const data = await res.json() as {
+            acceptedTokenCount?: number;
+            indexedTokenCount?: number;
+            storedTokenCount?: number;
+          };
+          console.info("Secure upload indexing", {
+            submittedTokenCount: searchTokens.length,
+            backendAcceptedTokenCount: data.acceptedTokenCount ?? data.indexedTokenCount ?? 0,
+            storedTokenCount: data.storedTokenCount ?? data.indexedTokenCount ?? 0,
+          });
 
-          if (data.fileId) {
-            try {
-              // Save key locally ONLY on the device.
-              await storeKeySecurely(data.fileId, keyHex);
-            } catch (keyError) {
-              const keyMessage =
-                keyError instanceof Error
-                  ? keyError.message
-                  : "Local key storage failed";
-
-              setErrorMsg(
-                `Upload succeeded, but local key storage failed: ${keyMessage}`,
-              );
-              setState("error");
-              return;
-            }
-          }
-
-          setState("uploaded");
+           setState("uploaded");
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         } catch (e) {
           const message = (e as Error).message;

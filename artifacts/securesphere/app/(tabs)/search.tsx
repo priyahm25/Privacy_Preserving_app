@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -13,47 +13,145 @@ import { router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useColors } from "@/hooks/useColors";
 import { FileCard } from "@/components/FileCard";
-import { DUMMY_FILES, SecureFile } from "@/data/mockData";
+import { useUser } from "@clerk/expo";
+import { createQuerySearchTokens } from "@/lib/searchIndex";
+import { formatBytes, SecureFileRecord, useFilesApi } from "@/lib/filesApi";
 
-const RECENT_SEARCHES = [
-  "Q4 Report",
-  "Project Proposal",
-  "Security Audit",
-  "Team Presentation",
-];
+const SEARCH_MODES = ["AND", "OR"] as const;
 
-const FILTERS = ["All", "Encrypted", "Shared", "My Files"] as const;
+type SearchDisplayFile = {
+  id: string;
+  name: string;
+  type: SecureFileRecord["type"];
+  size: string;
+  encrypted: boolean;
+  shared: boolean;
+  ownerId: string;
+  sharedWith: string[];
+  createdAt: string;
+  modifiedAt: string;
+};
+
+function toCardFile(file: SecureFileRecord): SearchDisplayFile {
+  return {
+    id: file.id,
+    name: file.name,
+    type: file.type,
+    size: formatBytes(file.sizeBytes),
+    encrypted: file.encrypted,
+    shared: (file.shares?.length ?? 0) > 0,
+    ownerId: file.ownerId,
+    sharedWith: file.shares?.map((share) => share.clerkId) ?? [],
+    createdAt: file.createdAt,
+    modifiedAt: file.modifiedAt,
+  };
+}
 
 export default function Search() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
+  const { user } = useUser();
+  const { searchFiles, listFiles } = useFilesApi();
   const [query, setQuery] = useState("");
-  const [activeFilter, setActiveFilter] = useState<string>("All");
+  const [searchMode, setSearchMode] = useState<"AND" | "OR">("AND");
+  const [results, setResults] = useState<SearchDisplayFile[]>([]);
+  const [uploadedFiles, setUploadedFiles] = useState<SearchDisplayFile[]>([]);
+  const [searchError, setSearchError] = useState<string | null>(null);
+  const [nextPage, setNextPage] = useState<number | null>(null);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const searchGeneration = useRef(0);
+  const searchFilesRef = useRef(searchFiles);
+  const listFilesRef = useRef(listFiles);
+  searchFilesRef.current = searchFiles;
+  listFilesRef.current = listFiles;
 
   const topPad = Platform.OS === "web" ? 67 : insets.top;
 
-  const results: SecureFile[] =
-    query.length > 0
-      ? DUMMY_FILES.filter((f) => {
-          const matchSearch = f.name
-            .toLowerCase()
-            .includes(query.toLowerCase());
+  useEffect(() => {
+    let cancelled = false;
+    if (!user?.id) {
+      setUploadedFiles([]);
+      return () => {
+        cancelled = true;
+      };
+    }
 
-          if (activeFilter === "Encrypted") {
-            return matchSearch && f.encrypted;
+    void listFilesRef.current()
+      .then(({ owned }) => {
+        if (!cancelled) setUploadedFiles(owned.map(toCardFile));
+      })
+      .catch(() => {
+        if (!cancelled) setUploadedFiles([]);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [user?.id]);
+
+  useEffect(() => {
+    let cancelled = false;
+    const generation = ++searchGeneration.current;
+    setNextPage(null);
+    setLoadingMore(false);
+    setSearchError(null);
+    if (!query.trim() || !user?.id) {
+      setResults([]);
+      return () => { cancelled = true; };
+    }
+    const timer = setTimeout(() => {
+      void (async () => {
+        try {
+          const tokens = await createQuerySearchTokens(user.id, query);
+          const response = await searchFilesRef.current(tokens, searchMode);
+          console.info("Secure search", {
+            queryTokenCount: tokens.length,
+            matchedFileCount: response.files.length,
+          });
+          if (!cancelled && generation === searchGeneration.current) {
+            setResults(response.files.map(toCardFile));
+            setNextPage(response.nextPage);
           }
-
-          if (activeFilter === "Shared") {
-            return matchSearch && f.shared;
+        } catch (error) {
+          if (!cancelled && generation === searchGeneration.current) {
+            setResults([]);
+            setNextPage(null);
+            setSearchError(
+              error instanceof Error
+                ? error.message
+                : "Encrypted search is unavailable.",
+            );
           }
+        }
+      })();
+    }, 250);
+    return () => { cancelled = true; clearTimeout(timer); };
+  }, [query, searchMode, user?.id]);
 
-          if (activeFilter === "My Files") {
-            return matchSearch && f.ownerId === "current";
-          }
-
-          return matchSearch;
-        })
-      : [];
+  const loadMore = async () => {
+    if (nextPage === null || loadingMore || !user?.id) return;
+    const generation = searchGeneration.current;
+    setLoadingMore(true);
+    try {
+      const tokens = await createQuerySearchTokens(user.id, query);
+      const response = await searchFilesRef.current(tokens, searchMode, nextPage);
+      console.info("Secure search", {
+        queryTokenCount: tokens.length,
+        matchedFileCount: response.files.length,
+      });
+      if (generation === searchGeneration.current) {
+        setResults((current) => [...current, ...response.files.map(toCardFile)]);
+        setNextPage(response.nextPage);
+      }
+    } catch (error) {
+      // Retain the existing page and allow the user to retry.
+      setSearchError(
+        error instanceof Error ? error.message : "Could not load more results.",
+      );
+    } finally {
+      if (generation === searchGeneration.current) setLoadingMore(false);
+    }
+  };
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -104,6 +202,7 @@ export default function Search() {
           placeholder="Search encrypted files..."
           placeholderTextColor={colors.mutedForeground}
           autoFocus={false}
+          maxLength={4096}
         />
 
         {query.length > 0 && (
@@ -118,7 +217,7 @@ export default function Search() {
       </View>
 
       <FlatList
-        data={FILTERS}
+        data={SEARCH_MODES}
         horizontal
         showsHorizontalScrollIndicator={false}
         keyExtractor={(item) => item}
@@ -130,10 +229,10 @@ export default function Search() {
         style={{ flexGrow: 0 }}
         renderItem={({ item }) => (
           <TouchableOpacity
-            onPress={() => setActiveFilter(item)}
+            onPress={() => setSearchMode(item)}
             style={[
               styles.filterChip,
-              activeFilter === item
+            searchMode === item
                 ? {
                     backgroundColor: colors.primary,
                     borderColor: colors.primary,
@@ -149,7 +248,7 @@ export default function Search() {
                 styles.filterText,
                 {
                   color:
-                    activeFilter === item
+                    searchMode === item
                       ? colors.primaryForeground
                       : colors.mutedForeground,
                 },
@@ -161,11 +260,10 @@ export default function Search() {
         )}
       />
 
-      {/* Holds recent-search strings when idle and SecureFiles when searching. */}
-      <FlatList<string | SecureFile>
-        data={query.length > 0 ? results : RECENT_SEARCHES}
+      <FlatList<SearchDisplayFile>
+        data={query.length > 0 ? results : uploadedFiles}
         keyExtractor={(item, i) =>
-          typeof item === "string" ? item + i : item.id
+          item.id + i
         }
         contentContainerStyle={{
           paddingHorizontal: 20,
@@ -178,58 +276,8 @@ export default function Search() {
               <Text
                 style={[styles.sectionLabel, { color: colors.mutedForeground }]}
               >
-                Recent Searches
+                Your Encrypted Files
               </Text>
-
-              {RECENT_SEARCHES.map((s, i) => (
-                <TouchableOpacity
-                  key={i}
-                  onPress={() => setQuery(s)}
-                  style={[
-                    styles.recentItem,
-                    { borderBottomColor: colors.border },
-                  ]}
-                >
-                  <Ionicons
-                    name="time-outline"
-                    size={16}
-                    color={colors.mutedForeground}
-                  />
-
-                  <Text
-                    style={[styles.recentText, { color: colors.foreground }]}
-                  >
-                    {s}
-                  </Text>
-
-                  <Ionicons
-                    name="arrow-up-outline"
-                    size={14}
-                    color={colors.mutedForeground}
-                    style={{ transform: [{ rotate: "45deg" }] }}
-                  />
-                </TouchableOpacity>
-              ))}
-
-              <Text
-                style={[
-                  styles.sectionLabel,
-                  {
-                    color: colors.mutedForeground,
-                    marginTop: 20,
-                  },
-                ]}
-              >
-                All Files
-              </Text>
-
-              {DUMMY_FILES.slice(0, 5).map((file) => (
-                <FileCard
-                  key={file.id}
-                  file={file}
-                  onPress={() => router.push(`/file-details/${file.id}`)}
-                />
-              ))}
             </View>
           ) : results.length > 0 ? (
             <Text
@@ -239,18 +287,12 @@ export default function Search() {
             </Text>
           ) : null
         }
-        renderItem={({ item }) => {
-          if (typeof item === "string") {
-            return null;
-          }
-
-          return (
+        renderItem={({ item }) => (
             <FileCard
               file={item}
               onPress={() => router.push(`/file-details/${item.id}`)}
             />
-          );
-        }}
+        )}
         ListEmptyComponent={
           query.length > 0 ? (
             <View style={styles.empty}>
@@ -261,15 +303,28 @@ export default function Search() {
               />
 
               <Text style={[styles.emptyTitle, { color: colors.foreground }]}>
-                No results
+                {searchError ? "Search unavailable" : "No results"}
               </Text>
 
               <Text
                 style={[styles.emptyText, { color: colors.mutedForeground }]}
               >
-                No encrypted files match "{query}"
+                {searchError ?? `No encrypted files match "${query}"`}
               </Text>
             </View>
+          ) : null
+        }
+        ListFooterComponent={
+          query.length > 0 && nextPage !== null ? (
+            <TouchableOpacity
+              onPress={loadMore}
+              disabled={loadingMore}
+              style={[styles.loadMore, { borderColor: colors.border }]}
+            >
+              <Text style={[styles.loadMoreText, { color: colors.primary }]}>
+                {loadingMore ? "Loading..." : "Load more"}
+              </Text>
+            </TouchableOpacity>
           ) : null
         }
       />
@@ -358,24 +413,23 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
 
-  recentItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-    paddingVertical: 14,
-    borderBottomWidth: 1,
-  },
-
-  recentText: {
-    flex: 1,
-    fontSize: 15,
-    fontFamily: "Inter_400Regular",
-  },
-
   empty: {
     alignItems: "center",
     paddingTop: 60,
     gap: 12,
+  },
+
+  loadMore: {
+    alignItems: "center",
+    borderWidth: 1,
+    borderRadius: 10,
+    marginVertical: 10,
+    paddingVertical: 10,
+  },
+
+  loadMoreText: {
+    fontFamily: "Inter_600SemiBold",
+    fontSize: 14,
   },
 
   emptyTitle: {

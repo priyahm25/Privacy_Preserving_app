@@ -7,14 +7,14 @@ import crypto from "node:crypto";
  * every byte that passes through it is already AES-256-GCM ciphertext. Nothing
  * here ever sees a key or a plaintext buffer:
  *
- *   - `FILE_ENCRYPTION_KEY` is not read in this file and is never sent to
- *     Supabase in any form (not in a header, a path, or object metadata).
+ *   - Client file-encryption keys are not available to this process and are
+ *     never sent to Supabase in any form (not in a header, path, or metadata).
  *   - Object keys are random UUIDs, never derived from the filename, so the
  *     bucket listing leaks nothing about what a file contains or is called.
  *   - The bucket must be PRIVATE. We only ever talk to it with the service-role
  *     key over the server-side REST API; no public URL is generated and no
- *     signed URL is handed to the client, so downloads are always mediated by
- *     the API (which is where decryption and authorisation happen).
+ *     signed URL is handed to the client, so downloads are mediated by the API
+ *     for authorization while decryption remains on the client.
  *
  * Deliberately written against the Storage REST API with `fetch` rather than
  * pulling in `@supabase/supabase-js`: fewer dependencies handling ciphertext,
@@ -27,6 +27,22 @@ export interface StorageConfig {
   url: string;
   serviceKey: string;
   bucket: string;
+}
+
+export class StorageOperationError extends Error {
+  constructor(
+    message: string,
+    public readonly context: {
+      operation: "upload" | "download" | "delete";
+      bucket: string;
+      path: string;
+      status: number;
+      detail: string;
+    },
+  ) {
+    super(message);
+    this.name = "StorageOperationError";
+  }
 }
 
 /**
@@ -118,8 +134,9 @@ export async function uploadEncryptedObject(
 
   if (!response.ok) {
     const detail = await response.text().catch(() => "");
-    throw new Error(
+    throw new StorageOperationError(
       `Supabase Storage upload failed (${response.status}). ${detail}`.trim(),
+      { operation: "upload", bucket: config.bucket, path, status: response.status, detail },
     );
   }
 }
@@ -135,8 +152,9 @@ export async function downloadEncryptedObject(path: string): Promise<Buffer> {
 
   if (!response.ok) {
     const detail = await response.text().catch(() => "");
-    throw new Error(
+    throw new StorageOperationError(
       `Supabase Storage download failed (${response.status}). ${detail}`.trim(),
+      { operation: "download", bucket: config.bucket, path, status: response.status, detail },
     );
   }
 
@@ -158,8 +176,9 @@ export async function deleteEncryptedObject(path: string): Promise<void> {
 
   if (!response.ok && response.status !== 404) {
     const detail = await response.text().catch(() => "");
-    throw new Error(
+    throw new StorageOperationError(
       `Supabase Storage delete failed (${response.status}). ${detail}`.trim(),
+      { operation: "delete", bucket: config.bucket, path, status: response.status, detail },
     );
   }
 }

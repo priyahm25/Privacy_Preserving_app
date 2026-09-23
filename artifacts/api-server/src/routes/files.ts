@@ -5,23 +5,30 @@ import {
   usersTable,
   teammatesTable,
   filesTable,
+  fileSearchTokensTable,
   fileSharesTable,
   userDeviceKeysTable,
   type ScanVerdict,
   type SharePermission,
 } from "@workspace/db";
-import { eq, and, inArray, desc, isNull } from "drizzle-orm";
+import { eq, and, inArray, desc, isNull, sql } from "drizzle-orm";
 import { requireAuth, getClerkId } from "../middlewares/auth";
-import { scanFile } from "../lib/spamScanner";
-import { encryptToBlob, isEncryptionConfigured } from "../lib/encryption";
 import {
   buildObjectPath,
   uploadEncryptedObject,
   downloadEncryptedObject,
   deleteEncryptedObject,
+  getStorageConfig,
   isStorageConfigured,
+  StorageOperationError,
 } from "../lib/supabaseStorage";
 import { logger } from "../lib/logger";
+import {
+  MAX_INDEXED_SEARCH_TOKENS,
+  MAX_SEARCH_RESULTS,
+  parseSearchRequest,
+  parseSearchTokens,
+} from "../lib/searchValidation";
 
 const router = Router();
 
@@ -142,11 +149,30 @@ function paramId(req: Request): string {
   return Array.isArray(value) ? (value[0] ?? "") : (value ?? "");
 }
 
+const CLIENT_FILE_ID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+/** Extract driver diagnostics without logging Drizzle's SQL text or parameters. */
+function databaseErrorContext(error: unknown) {
+  const source = error && typeof error === "object" && "cause" in error
+    ? error.cause
+    : error;
+  if (!source || typeof source !== "object") return undefined;
+  return {
+    code: "code" in source ? String(source.code) : undefined,
+    table: "table" in source ? String(source.table) : undefined,
+    column: "column" in source ? String(source.column) : undefined,
+    constraint: "constraint" in source ? String(source.constraint) : undefined,
+  };
+}
+
 router.post(
   "/upload",
   acceptUpload,
   async (req: Request, res: Response): Promise<void> => {
     let uploadedPath: string | null = null;
+    let objectPath: string | null = null;
+    let failureStage = "request-validation";
+    let ciphertextBytes: number | null = null;
 
     try {
       const clerkId = getClerkId(req);
@@ -165,6 +191,8 @@ router.post(
           ? req.body.malwareScanResult.trim().toUpperCase()
           : "";
       const confidence = Number(req.body?.malwareScanConfidence ?? 0);
+      const searchTokens = parseSearchTokens(req.body?.searchTokens);
+      const clientFileId = typeof req.body?.fileId === "string" ? req.body.fileId : undefined;
 
       if (!file) {
         res.status(400).json({ error: "No file was uploaded." });
@@ -173,6 +201,17 @@ router.post(
 
       if (file.size === 0) {
         res.status(400).json({ error: "The encrypted file is empty." });
+        return;
+      }
+      ciphertextBytes = file.buffer.length;
+
+      if (searchTokens === null) {
+        res.status(400).json({ error: "Search tokens must be a bounded JSON array of opaque HMAC-SHA-256 values." });
+        return;
+      }
+
+      if (clientFileId !== undefined && !CLIENT_FILE_ID_PATTERN.test(clientFileId)) {
+        res.status(400).json({ error: "A valid client file ID is required when supplied." });
         return;
       }
 
@@ -203,6 +242,7 @@ router.post(
         return;
       }
 
+      failureStage = "storage-config";
       if (!isStorageConfigured()) {
         res.status(503).json({
           error:
@@ -211,30 +251,68 @@ router.post(
         return;
       }
 
-      const objectPath = buildObjectPath(clerkId);
+      failureStage = "storage-upload";
+      objectPath = buildObjectPath(clerkId);
+      logger.info(
+        {
+          stage: failureStage,
+          bucket: getStorageConfig().bucket,
+          path: objectPath,
+          ciphertextBytes,
+          contentType: "application/octet-stream",
+        },
+        "Uploading encrypted object to Storage",
+      );
       await uploadEncryptedObject(objectPath, file.buffer);
       uploadedPath = objectPath;
+      const storedObjectPath = objectPath;
 
-      const [stored] = await db
-        .insert(filesTable)
-        .values({
-          ownerClerkId: clerkId,
-          filename,
-          mimeType,
-          sizeBytes: file.size,
-          supabasePath: objectPath,
-          iv: iv.toLowerCase(),
-          encrypted: true,
-          malwareScanResult: "clean",
-          malwareScanConfidence: confidence,
-        })
-        .returning(fileColumns);
+      failureStage = "database-transaction";
+      const stored = await db.transaction(async (tx) => {
+        const [fileRow] = await tx
+          .insert(filesTable)
+          .values({
+            id: clientFileId,
+            ownerClerkId: clerkId,
+            filename,
+            mimeType,
+            sizeBytes: file.size,
+            supabasePath: storedObjectPath,
+            iv: iv.toLowerCase(),
+            encrypted: true,
+            malwareScanResult: "clean",
+            malwareScanConfidence: confidence,
+          })
+          .returning(fileColumns);
 
+        if (searchTokens.length > 0) {
+          await tx.insert(fileSearchTokensTable).values(
+            searchTokens.map((token) => ({ fileId: fileRow.id, userId: clerkId, token })),
+          );
+        }
+        return fileRow;
+      });
+
+      failureStage = "response";
       uploadedPath = null;
+      logger.info(
+        {
+          fileId: stored.id,
+          submittedTokenCount: searchTokens.length,
+          acceptedTokenCount: searchTokens.length,
+          storedTokenCount: searchTokens.length,
+        },
+        "Encrypted upload and blind index committed",
+      );
       res.status(201).json({
         success: true,
         fileId: stored.id,
         file: toFileResponse(stored),
+        // Count only: clients can verify indexing without receiving a
+        // plaintext term or a blind-index token back from the server.
+        indexedTokenCount: searchTokens.length,
+        acceptedTokenCount: searchTokens.length,
+        storedTokenCount: searchTokens.length,
       });
     } catch (error) {
       if (uploadedPath) {
@@ -246,7 +324,33 @@ router.post(
         });
       }
 
-      logger.error({ err: error }, "Encrypted upload failed");
+      const storageConfig = (() => {
+        try {
+          const config = getStorageConfig();
+          return { bucket: config.bucket, configured: true };
+        } catch (configError) {
+          return {
+            configured: false,
+            configError: configError instanceof Error ? configError.message : String(configError),
+          };
+        }
+      })();
+      const storageError = error instanceof StorageOperationError ? error.context : undefined;
+      const databaseError = databaseErrorContext(error);
+      logger.error(
+        {
+          errorType: error instanceof Error ? error.name : typeof error,
+          stage: failureStage,
+          storage: {
+            ...storageConfig,
+            path: objectPath,
+            error: storageError,
+          },
+          ciphertextBytes,
+          database: databaseError,
+        },
+        "Encrypted upload failed",
+      );
       res
         .status(500)
         .json({ error: "Failed to store the encrypted file securely." });
@@ -287,205 +391,15 @@ async function filterToTeammates(
 }
 
 /**
- * POST /api/files/share
- *
- * The secure share pipeline, in strict order:
- *   1. Accept the picked file into server memory
- *   2. AI layer scans the plaintext for spam / phishing / malware
- *   3. Only on a clean verdict, encrypt with AES-256-GCM
- *   4. Only after encryption, upload the ciphertext to Supabase Storage
- *   5. Only after the upload, insert the metadata row
- *   6. Record the share rows for the selected teammates
- *
- * A flagged file is never encrypted, never uploaded, and never recorded - it is
- * rejected with the scan verdict so the app can explain why.
- *
- * The scan needs plaintext, which is why it runs before encryption and why it
- * runs here rather than anywhere Supabase can observe. Supabase only ever
- * receives step 4's output.
- *
- * Multipart fields: `file` (required), `shareWith` (optional JSON array of
- * teammate Clerk ids), `permission` (optional "viewer" | "editor").
+ * This legacy endpoint previously accepted plaintext multipart uploads and
+ * encrypted them on the API server. It is deliberately retired: use /upload,
+ * where the client scans, indexes, encrypts, and uploads ciphertext only.
  */
-router.post(
-  "/share",
-  acceptUpload,
-  async (req: Request, res: Response): Promise<void> => {
-    // Tracked so a failure after the upload can remove the orphaned ciphertext.
-    let uploadedPath: string | null = null;
-
-    try {
-      const clerkId = getClerkId(req);
-      const file = req.file;
-
-      if (!file) {
-        res.status(400).json({ error: "No file was uploaded." });
-        return;
-      }
-
-      if (file.size === 0) {
-        res.status(400).json({ error: "The selected file is empty." });
-        return;
-      }
-
-      const user = await requireUserRow(clerkId);
-      if (!user) {
-        res.status(404).json({
-          error: "User profile not found. Sign out and back in to sync it.",
-        });
-        return;
-      }
-
-      // Fail before spending a scan if the file could not be protected anyway.
-      // Refusing here is the point: without a key there is no path that stores
-      // a readable file.
-      if (!isEncryptionConfigured()) {
-        res.status(503).json({
-          error:
-            "File encryption is not configured on the server. Set FILE_ENCRYPTION_KEY (openssl rand -hex 32).",
-        });
-        return;
-      }
-
-      if (!isStorageConfigured()) {
-        res.status(503).json({
-          error:
-            "Supabase Storage is not configured. Set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY.",
-        });
-        return;
-      }
-
-      const fileName = file.originalname || "untitled";
-      const mimeType = file.mimetype || "application/octet-stream";
-
-      // --- Step 1: AI scan (needs plaintext, so it must run first) ----------
-      const scan = await scanFile({
-        fileName,
-        mimeType,
-        buffer: file.buffer,
-      });
-
-      if (scan.verdict === "flagged") {
-        // Nothing is encrypted, uploaded, or recorded. The reason is returned
-        // to the user but deliberately not persisted - it can quote file
-        // content, and that content is exactly what must not reach the database.
-        logger.warn(
-          { riskScore: scan.riskScore, labels: scan.labels },
-          "Upload blocked by AI scan",
-        );
-
-        res.status(422).json({
-          error: "This file was blocked by the security scan.",
-          scan: {
-            verdict: scan.verdict,
-            riskScore: scan.riskScore,
-            reason: scan.reason,
-            labels: scan.labels,
-            engine: scan.engine,
-            aiAvailable: scan.aiAvailable,
-          },
-        });
-        return;
-      }
-
-      // --- Step 2: encrypt (only reached on a green signal) -----------------
-      const { blob, iv } = encryptToBlob(file.buffer);
-
-      // --- Step 3: upload ciphertext ----------------------------------------
-      const objectPath = buildObjectPath(clerkId);
-      await uploadEncryptedObject(objectPath, blob);
-      uploadedPath = objectPath;
-
-      // --- Step 4: record the metadata --------------------------------------
-      const [stored] = await db
-        .insert(filesTable)
-        .values({
-          ownerClerkId: clerkId,
-          filename: fileName,
-          mimeType,
-          sizeBytes: file.size,
-          supabasePath: objectPath,
-          iv,
-          encrypted: true,
-          malwareScanResult: scan.verdict,
-          malwareScanConfidence: scan.riskScore / 100,
-        })
-        .returning(fileColumns);
-
-      // The row now owns the object; no rollback needed past this point.
-      uploadedPath = null;
-
-      // --- Step 5: share with the selected teammates ------------------------
-      let requestedIds: string[] = [];
-      const rawShareWith = req.body?.shareWith;
-      if (typeof rawShareWith === "string" && rawShareWith.trim()) {
-        try {
-          const parsed = JSON.parse(rawShareWith);
-          if (Array.isArray(parsed)) {
-            requestedIds = parsed.filter(
-              (value): value is string => typeof value === "string",
-            );
-          }
-        } catch {
-          // A malformed shareWith should not undo a successful upload.
-          logger.warn("Ignoring malformed shareWith field");
-        }
-      }
-
-      const permission: SharePermission =
-        req.body?.permission === "editor" ? "editor" : "viewer";
-
-      const recipientIds = await filterToTeammates(clerkId, requestedIds);
-
-      if (recipientIds.length > 0) {
-        await db
-          .insert(fileSharesTable)
-          .values(
-            recipientIds.map((recipientId) => ({
-              fileId: stored.id,
-              sharedWithUserId: recipientId,
-              sharedByUserId: clerkId,
-              permission,
-            })),
-          )
-          .onConflictDoNothing();
-      }
-
-      res.status(201).json({
-        success: true,
-        file: toFileResponse(stored),
-        scan: {
-          verdict: scan.verdict,
-          riskScore: scan.riskScore,
-          reason: scan.reason,
-          labels: scan.labels,
-          engine: scan.engine,
-          aiAvailable: scan.aiAvailable,
-        },
-        sharedWith: recipientIds,
-        ignoredRecipients: requestedIds.filter(
-          (id) => !recipientIds.includes(id),
-        ),
-      });
-      return;
-    } catch (error) {
-      // An upload that never got its row would leave ciphertext nobody can
-      // account for. Remove it.
-      if (uploadedPath) {
-        await deleteEncryptedObject(uploadedPath).catch((cleanupError) => {
-          logger.error(
-            { err: cleanupError, path: uploadedPath },
-            "Failed to clean up orphaned encrypted object",
-          );
-        });
-      }
-
-      logger.error({ err: error }, "Secure share failed");
-      res.status(500).json({ error: "Failed to store the file securely." });
-      return;
-    }
-  },
-);
+router.post("/share", (_req: Request, res: Response): void => {
+  res.status(410).json({
+    error: "This plaintext upload endpoint has been retired. Use /api/files/upload with client-side encryption.",
+  });
+});
 
 /**
  * GET /api/files
@@ -553,6 +467,91 @@ router.get("/", async (req: Request, res: Response): Promise<void> => {
     logger.error({ err: error }, "Failed to list files");
     res.status(500).json({ error: "Failed to list files." });
     return;
+  }
+});
+
+/**
+ * POST /api/files/search
+ * Receives HMAC tokens only. The database compares opaque values and never
+ * receives query words, document text, encryption keys, or ciphertext bytes.
+ */
+router.post("/search", async (req: Request, res: Response): Promise<void> => {
+  try {
+    const clerkId = getClerkId(req);
+    const searchRequest = parseSearchRequest(req.body);
+    if (!searchRequest) {
+      res.status(400).json({ error: "Invalid encrypted-search request." });
+      return;
+    }
+    const { tokens, mode, page, pageSize } = searchRequest;
+    if (page * pageSize >= MAX_SEARCH_RESULTS) {
+      res.json({ files: [], nextPage: null });
+      return;
+    }
+    if (tokens.length === 0) {
+      res.json({ files: [], nextPage: null });
+      return;
+    }
+
+    const matchedFileRows = await db
+      .select({ fileId: fileSearchTokensTable.fileId, createdAt: filesTable.createdAt })
+      .from(fileSearchTokensTable)
+      .innerJoin(filesTable, eq(filesTable.id, fileSearchTokensTable.fileId))
+      .where(and(
+        eq(fileSearchTokensTable.userId, clerkId),
+        eq(filesTable.ownerClerkId, clerkId),
+        inArray(fileSearchTokensTable.token, tokens),
+      ))
+      .groupBy(fileSearchTokensTable.fileId, filesTable.createdAt)
+      .having(mode === "AND"
+        ? sql`count(distinct ${fileSearchTokensTable.token}) = ${tokens.length}`
+        : undefined)
+      .orderBy(desc(filesTable.createdAt), desc(fileSearchTokensTable.fileId))
+      .limit(Math.min(pageSize + 1, MAX_SEARCH_RESULTS - page * pageSize))
+      .offset(page * pageSize);
+
+    const hasMore = matchedFileRows.length > pageSize;
+    const fileIds = matchedFileRows.slice(0, pageSize).map((row) => row.fileId);
+
+    if (fileIds.length === 0) {
+      logger.info(
+        {
+          stage: "search-response",
+          mode,
+          submittedTokenCount: tokens.length,
+          matchedFileCount: 0,
+          page,
+          nextPage: null,
+        },
+        "Encrypted search completed",
+      );
+      res.json({ files: [], nextPage: null });
+      return;
+    }
+
+    const files = await db
+      .select(fileColumns)
+      .from(filesTable)
+      .where(and(eq(filesTable.ownerClerkId, clerkId), inArray(filesTable.id, fileIds)))
+      .orderBy(desc(filesTable.createdAt), desc(filesTable.id));
+    logger.info(
+      {
+        stage: "search-response",
+        mode,
+        submittedTokenCount: tokens.length,
+        matchedFileCount: files.length,
+        page,
+        nextPage: hasMore ? page + 1 : null,
+      },
+      "Encrypted search completed",
+    );
+    res.json({
+      files: files.map(toFileResponse),
+      nextPage: hasMore && (page + 1) * pageSize < MAX_SEARCH_RESULTS ? page + 1 : null,
+    });
+  } catch (error) {
+    logger.error({ err: error }, "Failed to search encrypted files");
+    res.status(500).json({ error: "Failed to search encrypted files." });
   }
 });
 

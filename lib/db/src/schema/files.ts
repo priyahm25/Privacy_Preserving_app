@@ -18,7 +18,7 @@ export type SharePermission = "viewer" | "editor";
 /**
  * Files - metadata only. **No file content is ever stored in this table.**
  *
- * The pipeline is: scan -> encrypt -> upload ciphertext -> insert this row.
+ * The pipeline is: client-side scan -> client-side encrypt -> upload ciphertext -> insert this row.
  * By the time a row exists, the bytes are already AES-256-GCM ciphertext
  * sitting in a private Supabase Storage bucket at `supabasePath`.
  *
@@ -28,8 +28,8 @@ export type SharePermission = "viewer" | "editor";
  *
  * What Supabase can NOT see:
  *   - the plaintext of any file
- *   - the encryption key (FILE_ENCRYPTION_KEY lives only in the API server's
- *     environment and is never written to the database or to Storage)
+ *   - the client-generated file-encryption key, which remains in local secure
+ *     storage and is never sent to the API, database, or object storage
  *   - the AI scan's written reasoning, which can quote file content and is
  *     therefore deliberately returned to the client but never persisted
  *
@@ -63,6 +63,9 @@ export const filesTable = pgTable(
 
     /** 0.0 - 1.0 confidence that the file is malicious. */
     malwareScanConfidence: real("malware_scan_confidence"),
+
+    /** Optional folder/directory tag. */
+    folder: text("folder"),
 
     createdAt: timestamp("created_at").notNull().defaultNow(),
   },
@@ -132,6 +135,40 @@ export const userDeviceKeysTable = pgTable(
   (table) => [index("user_device_keys_user_idx").on(table.userId)],
 ).enableRLS();
 
+/**
+ * Opaque blind-index search tokens.
+ *
+ * Generated entirely client-side using HMAC-SHA-256 over a per-user search key
+ * derived via HKDF from the device-local key. This deployment has no
+ * synchronised user master key, so indexes are intentionally device-bound.
+ * The server never sees plaintext search words, document content, or keys.
+ * Each token is an opaque hex hash scoped to (fileId, userId).
+ */
+export const fileSearchTokensTable = pgTable(
+  "file_search_tokens",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    fileId: uuid("file_id")
+      .notNull()
+      .references(() => filesTable.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => usersTable.clerkId, { onDelete: "cascade" }),
+    token: text("token").notNull(),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+  },
+  (table) => [
+    index("file_search_tokens_user_idx").on(table.userId),
+    index("file_search_tokens_token_idx").on(table.token),
+    index("file_search_tokens_user_token_file_idx").on(table.userId, table.token, table.fileId),
+    uniqueIndex("file_search_tokens_unique_idx").on(
+      table.fileId,
+      table.userId,
+      table.token,
+    ),
+  ],
+).enableRLS();
+
 // Zod schemas
 export type InsertFile = typeof filesTable.$inferInsert;
 export type FileRecord = typeof filesTable.$inferSelect;
@@ -143,3 +180,6 @@ export const insertFileShareSchema = createInsertSchema(fileSharesTable).omit({
 
 export type InsertFileShare = typeof fileSharesTable.$inferInsert;
 export type FileShare = typeof fileSharesTable.$inferSelect;
+
+export type InsertFileSearchToken = typeof fileSearchTokensTable.$inferInsert;
+export type FileSearchToken = typeof fileSearchTokensTable.$inferSelect;
