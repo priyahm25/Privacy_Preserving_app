@@ -6,6 +6,7 @@
   "scripts": {
     "hello": "tsx ./src/hello.ts",
     "test:secure-search": "node --experimental-strip-types --test ./src/secure-search.test.ts",
+    "test:notifications": "node --experimental-strip-types --test ./src/notifications.test.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "devDependencies": {

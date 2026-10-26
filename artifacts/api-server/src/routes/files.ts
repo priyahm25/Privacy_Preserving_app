@@ -7,6 +7,7 @@ import {
   filesTable,
   fileSearchTokensTable,
   fileSharesTable,
+  notificationsTable,
   userDeviceKeysTable,
   type ScanVerdict,
   type SharePermission,
@@ -23,6 +24,7 @@ import {
   StorageOperationError,
 } from "../lib/supabaseStorage";
 import { logger } from "../lib/logger";
+import { makeNotificationEvent, wasNewlyPersisted } from "../lib/notificationEvents";
 import {
   MAX_INDEXED_SEARCH_TOKENS,
   MAX_SEARCH_RESULTS,
@@ -739,15 +741,23 @@ router.post(
       const [ownerKey] = await db.select().from(userDeviceKeysTable).where(and(eq(userDeviceKeysTable.id, ownerDeviceKeyId), eq(userDeviceKeysTable.userId, clerkId), isNull(userDeviceKeysTable.revokedAt))).limit(1);
       if (!recipientKey || !ownerKey) { res.status(409).json({ error: "An active device key is required for both users." }); return; }
 
-      await db
-        .insert(fileSharesTable)
-        .values(
-          [{ fileId: rows[0].id, sharedWithUserId: recipientId,
-            sharedByUserId: clerkId,
-            permission,
-            recipientDeviceKeyId, ownerDeviceKeyId, wrappedFileKey, wrappingIv, wrappingAlgorithm }],
-        )
-        .onConflictDoUpdate({ target: [fileSharesTable.fileId, fileSharesTable.sharedWithUserId], set: { recipientDeviceKeyId, ownerDeviceKeyId, wrappedFileKey, wrappingIv, wrappingAlgorithm } });
+      await db.transaction(async (tx) => {
+        const [createdShare] = await tx.insert(fileSharesTable).values({
+          fileId: rows[0].id, sharedWithUserId: recipientId, sharedByUserId: clerkId,
+          permission, recipientDeviceKeyId, ownerDeviceKeyId, wrappedFileKey, wrappingIv, wrappingAlgorithm,
+        }).onConflictDoNothing({ target: [fileSharesTable.fileId, fileSharesTable.sharedWithUserId] }).returning({ id: fileSharesTable.id });
+        if (wasNewlyPersisted(createdShare)) {
+          const [actor] = await tx.select({ name: usersTable.name, email: usersTable.email }).from(usersTable).where(eq(usersTable.clerkId, clerkId)).limit(1);
+          const displayName = actor?.name?.trim() || actor?.email.split("@")[0] || "A teammate";
+          const notification = makeNotificationEvent({ recipientUserId: recipientId, actorUserId: clerkId, actorName: displayName,
+            type: "file_shared", resourceType: "file", resourceId: rows[0].id });
+          if (notification) await tx.insert(notificationsTable).values(notification).onConflictDoNothing();
+        } else {
+          // Preserve secure key rotation/update behavior on an existing share, without duplicate alerts.
+          await tx.update(fileSharesTable).set({ recipientDeviceKeyId, ownerDeviceKeyId, wrappedFileKey, wrappingIv, wrappingAlgorithm })
+            .where(and(eq(fileSharesTable.fileId, rows[0].id), eq(fileSharesTable.sharedWithUserId, recipientId)));
+        }
+      });
 
       res.json({ success: true, sharedWith: recipientIds });
       return;

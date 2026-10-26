@@ -4,11 +4,13 @@ import {
   usersTable,
   invitationsTable,
   teammatesTable,
+  notificationsTable,
 } from "@workspace/db";
-import { eq, and, ne, or, sql } from "drizzle-orm";
+import { eq, and, ne, or, sql, gt } from "drizzle-orm";
 import { requireAuth, getClerkId } from "../middlewares/auth";
 import { sendInvitationEmail, isMailConfigured } from "../lib/mailer";
 import crypto from "crypto";
+import { makeNotificationEvent } from "../lib/notificationEvents";
 
 /** Where the invitation link points. */
 function buildInvitationLink(token: string): string {
@@ -98,6 +100,24 @@ router.post(
           })
           .where(eq(usersTable.clerkId, clerkId));
       }
+
+      // An invitation may have been emailed before this account existed.
+      // Materialize any still-pending invitations now that this email has a
+      // verified app profile; dedupe keys make repeated sign-ins harmless.
+      await db.transaction(async (tx) => {
+        const pending = await tx.select({ id: invitationsTable.id, inviterId: invitationsTable.inviterId,
+          inviterName: usersTable.name, inviterEmail: usersTable.email })
+          .from(invitationsTable)
+          .innerJoin(usersTable, eq(usersTable.clerkId, invitationsTable.inviterId))
+          .where(and(eq(invitationsTable.invitedEmail, normalizedEmail), eq(invitationsTable.status, "pending"),
+            gt(invitationsTable.expiresAt, new Date()), ne(invitationsTable.inviterId, clerkId)));
+        for (const invite of pending) {
+          const notification = makeNotificationEvent({ recipientUserId: clerkId, actorUserId: invite.inviterId,
+            actorName: inviterDisplayName({ name: invite.inviterName, email: invite.inviterEmail }),
+            type: "collaboration_invite", resourceType: "invitation", resourceId: invite.id });
+          if (notification) await tx.insert(notificationsTable).values(notification).onConflictDoNothing();
+        }
+      });
 
       res.json({ success: true, clerkId });
       return;
@@ -283,12 +303,20 @@ router.post("/invite", async (req: Request, res: Response): Promise<void> => {
     // Expiry: 7 days from now
     const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
 
-    await db.insert(invitationsTable).values({
-      inviterId: clerkId,
-      invitedEmail: normalizedEmail,
-      token,
-      status: "pending",
-      expiresAt,
+    const invitation = await db.transaction(async (tx) => {
+      const [created] = await tx.insert(invitationsTable).values({
+        inviterId: clerkId,
+        invitedEmail: normalizedEmail,
+        token,
+        status: "pending",
+        expiresAt,
+      }).returning({ id: invitationsTable.id });
+      if (recipientUser[0]) {
+        const notification = makeNotificationEvent({ recipientUserId: recipientUser[0].clerkId, actorUserId: clerkId,
+          actorName: inviterDisplayName(user[0]), type: "collaboration_invite", resourceType: "invitation", resourceId: created.id });
+        if (notification) await tx.insert(notificationsTable).values(notification).onConflictDoNothing();
+      }
+      return created;
     });
 
     const invitationLink = buildInvitationLink(token);
@@ -558,40 +586,24 @@ router.post("/accept", async (req: Request, res: Response): Promise<void> => {
 
     // Create bidirectional teammate relationship
     // Only create if not already teammates
-    const existingTeammate = await db
-      .select()
-      .from(teammatesTable)
-      .where(
-        and(
-          eq(teammatesTable.userId, inv.inviterId),
-          eq(teammatesTable.teammateUserId, clerkId),
-        ),
-      )
-      .limit(1);
-
-    if (!existingTeammate.length) {
-      // Add both directions to be teammates
-      await Promise.all([
-        db.insert(teammatesTable).values({
-          userId: inv.inviterId,
-          teammateUserId: clerkId,
-        }),
-        db.insert(teammatesTable).values({
-          userId: clerkId,
-          teammateUserId: inv.inviterId,
-        }),
-      ]);
+    const accepted = await db.transaction(async (tx) => {
+      const [changed] = await tx.update(invitationsTable).set({ status: "accepted", acceptedAt: new Date(), acceptedByUserId: clerkId })
+        .where(and(eq(invitationsTable.id, inv.id), eq(invitationsTable.status, "pending"))).returning({ id: invitationsTable.id });
+      if (!changed) return false;
+      await tx.insert(teammatesTable).values([
+        { userId: inv.inviterId, teammateUserId: clerkId },
+        { userId: clerkId, teammateUserId: inv.inviterId },
+      ]).onConflictDoNothing();
+      const acceptingName = user[0].name?.trim() || user[0].email.split("@")[0];
+      const notification = makeNotificationEvent({ recipientUserId: inv.inviterId, actorUserId: clerkId, actorName: acceptingName,
+        type: "collaboration_accepted", resourceType: "invitation", resourceId: inv.id });
+      if (notification) await tx.insert(notificationsTable).values(notification).onConflictDoNothing();
+      return true;
+    });
+    if (!accepted) {
+      res.status(409).json({ error: "Invitation has already been accepted or is no longer pending." });
+      return;
     }
-
-    // Mark invitation as accepted
-    await db
-      .update(invitationsTable)
-      .set({
-        status: "accepted",
-        acceptedAt: new Date(),
-        acceptedByUserId: clerkId,
-      })
-      .where(eq(invitationsTable.id, inv.id));
 
     res.json({
       success: true,

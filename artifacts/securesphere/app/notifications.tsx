@@ -1,25 +1,24 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Platform } from 'react-native';
+import React, { useCallback, useRef, useState } from 'react';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Platform, ActivityIndicator } from 'react-native';
 import { router } from 'expo-router';
+import { useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useColors } from '@/hooks/useColors';
-import { DUMMY_NOTIFICATIONS, Notification } from '@/data/mockData';
-import { useApp } from '@/context/AppContext';
+import { AppNotification, useNotificationsApi } from '@/lib/notificationsApi';
 
-function getNotificationIcon(type: Notification['type']): { icon: string; color: string } {
+function getNotificationIcon(type: AppNotification['type']): { icon: string; color: string } {
   switch (type) {
-    case 'share': return { icon: 'share-social', color: '#0066FF' };
-    case 'invite': return { icon: 'person-add', color: '#00D4FF' };
-    case 'security': return { icon: 'shield-checkmark', color: '#00E676' };
-    case 'upload': return { icon: 'cloud-upload', color: '#B44FFF' };
+    case 'file_shared': return { icon: 'share-social', color: '#0066FF' };
+    case 'collaboration_invite': return { icon: 'person-add', color: '#00D4FF' };
+    case 'collaboration_accepted': return { icon: 'checkmark-circle', color: '#00E676' };
     default: return { icon: 'notifications', color: '#FF8C00' };
   }
 }
 
 function formatTime(iso: string): string {
   const date = new Date(iso);
-  const now = new Date('2026-07-22T12:00:00Z');
+  const now = new Date();
   const diff = (now.getTime() - date.getTime()) / 1000;
   if (diff < 3600) return `${Math.round(diff / 60)}m ago`;
   if (diff < 86400) return `${Math.round(diff / 3600)}h ago`;
@@ -29,20 +28,38 @@ function formatTime(iso: string): string {
 export default function Notifications() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
-  const { decrementNotifications } = useApp();
-  const [notifications, setNotifications] = useState(DUMMY_NOTIFICATIONS);
+  const api = useNotificationsApi();
+  const apiRef = useRef(api);
+  apiRef.current = api;
+  const [notifications, setNotifications] = useState<AppNotification[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const topPad = Platform.OS === 'web' ? 67 : insets.top;
   const botPad = Platform.OS === 'web' ? 34 : insets.bottom;
 
-  const markAllRead = () => {
-    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+  const refresh = useCallback(async () => {
+    try { setError(null); setNotifications(await apiRef.current.getNotifications()); }
+    catch (e) { setError(e instanceof Error ? e.message : 'Could not load notifications.'); }
+    finally { setLoading(false); }
+  }, []);
+  useFocusEffect(useCallback(() => {
+    void refresh();
+    const timer = setInterval(() => void refresh(), 30_000);
+    return () => clearInterval(timer);
+  }, [refresh]));
+  const markAllRead = async () => {
+    try { await apiRef.current.markAllRead(); await refresh(); }
+    catch (e) { setError(e instanceof Error ? e.message : 'Could not update notifications.'); }
+  };
+  const markRead = async (item: AppNotification) => {
+    try {
+      if (!item.readAt) { await apiRef.current.markRead(item.id); await refresh(); }
+      if (item.resourceType === 'file' && item.resourceId) router.push(`/file-details/${item.resourceId}`);
+      else if (item.resourceType === 'invitation') router.push('/members');
+    } catch (e) { setError(e instanceof Error ? e.message : 'Could not update notification.'); }
   };
 
-  const markRead = (id: string) => {
-    setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
-  };
-
-  const unreadCount = notifications.filter(n => !n.read).length;
+  const unreadCount = notifications.filter(n => !n.readAt).length;
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -57,7 +74,7 @@ export default function Notifications() {
             <Text style={[styles.unreadLabel, { color: colors.mutedForeground }]}>{unreadCount} unread</Text>
           )}
         </View>
-        <TouchableOpacity onPress={markAllRead} style={[styles.markAllBtn, { borderColor: colors.border }]}>
+        <TouchableOpacity onPress={() => void markAllRead()} style={[styles.markAllBtn, { borderColor: colors.border }]}>
           <Text style={[styles.markAllText, { color: colors.primary }]}>Mark all read</Text>
         </TouchableOpacity>
       </View>
@@ -71,13 +88,13 @@ export default function Notifications() {
           const iconInfo = getNotificationIcon(item.type);
           return (
             <TouchableOpacity
-              onPress={() => markRead(item.id)}
+              onPress={() => void markRead(item)}
               activeOpacity={0.75}
               style={[
                 styles.notifCard,
                 {
-                  backgroundColor: item.read ? colors.card : `${colors.primary}08`,
-                  borderColor: item.read ? colors.border : `${colors.primary}30`,
+                  backgroundColor: item.readAt ? colors.card : `${colors.primary}08`,
+                  borderColor: item.readAt ? colors.border : `${colors.primary}30`,
                 },
               ]}
             >
@@ -86,8 +103,8 @@ export default function Notifications() {
               </View>
               <View style={styles.notifContent}>
                 <View style={styles.notifTitleRow}>
-                  <Text style={[styles.notifTitle, { color: colors.foreground }]}>{item.title}</Text>
-                  {!item.read && <View style={[styles.unreadDot, { backgroundColor: colors.primary }]} />}
+                  <Text style={[styles.notifTitle, { color: colors.foreground }]}>{item.actorName || 'SecureSphere'}</Text>
+                  {!item.readAt && <View style={[styles.unreadDot, { backgroundColor: colors.primary }]} />}
                 </View>
                 <Text style={[styles.notifMessage, { color: colors.mutedForeground }]} numberOfLines={2}>
                   {item.message}
@@ -101,8 +118,10 @@ export default function Notifications() {
         }}
         ListEmptyComponent={
           <View style={styles.empty}>
+            {loading ? <ActivityIndicator color={colors.primary} /> : null}
             <Ionicons name="notifications-off-outline" size={48} color={colors.mutedForeground} />
-            <Text style={[styles.emptyTitle, { color: colors.foreground }]}>No notifications</Text>
+            <Text style={[styles.emptyTitle, { color: colors.foreground }]}>{error || (loading ? 'Loading notifications…' : 'No notifications')}</Text>
+            {error && <TouchableOpacity onPress={() => void refresh()}><Text style={[styles.markAllText, { color: colors.primary }]}>Try again</Text></TouchableOpacity>}
           </View>
         }
       />

@@ -123,6 +123,33 @@ export function AppProvider({ children }: { children: ReactNode }) {
     };
   }, [isLoaded, isSignedIn, user?.id]);
 
+  // Keep the header badge current while signed in. The API scopes this count
+  // to the verified Clerk subject, and cleanup prevents cross-account polling.
+  useEffect(() => {
+    if (!isLoaded || !isSignedIn) {
+      setNotificationCount(0);
+      return;
+    }
+    let cancelled = false;
+    const refreshCount = async () => {
+      try {
+        const token = await getToken();
+        if (!token || cancelled) return;
+        const response = await fetch(`${API_BASE_URL}/api/notifications/unread-count`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!response.ok || cancelled) return;
+        const data = await response.json();
+        if (!cancelled) setNotificationCount(Number(data.count) || 0);
+      } catch {
+        // Keep the last known count during transient connectivity failures.
+      }
+    };
+    void refreshCount();
+    const timer = setInterval(() => void refreshCount(), 30_000);
+    return () => { cancelled = true; clearInterval(timer); };
+  }, [isLoaded, isSignedIn, user?.id, getToken]);
+
   const currentUser: User = {
     ...CURRENT_USER,
     id: user?.id ?? CURRENT_USER.id,
