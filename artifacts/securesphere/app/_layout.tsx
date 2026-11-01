@@ -15,6 +15,7 @@ import {
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { AppProvider } from "@/context/AppContext";
+import { PushNotificationsBridge } from "@/components/PushNotificationsBridge";
 
 const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!;
 
@@ -110,6 +111,7 @@ export default function RootLayout() {
         <ErrorBoundary>
           <GestureHandlerRootView style={{ flex: 1 }}>
             <AppProvider>
+              <PushNotificationsBridge />
               <RootLayoutNav />
             </AppProvider>
           </GestureHandlerRootView>

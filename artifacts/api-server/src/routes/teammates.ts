@@ -11,6 +11,12 @@ import { requireAuth, getClerkId } from "../middlewares/auth";
 import { sendInvitationEmail, isMailConfigured } from "../lib/mailer";
 import crypto from "crypto";
 import { makeNotificationEvent } from "../lib/notificationEvents";
+import { persistedNotificationColumns, queuePushNotifications, type PersistedNotification } from "../lib/pushNotifications";
+import { checkResendable, singleFlight } from "../lib/invitationResend";
+import type { SendResult } from "../lib/emailDelivery";
+
+// One email per invitation at a time, however many resend requests arrive.
+const resendFlight = singleFlight<SendResult>();
 
 /** Where the invitation link points. */
 function buildInvitationLink(token: string): string {
@@ -104,7 +110,8 @@ router.post(
       // An invitation may have been emailed before this account existed.
       // Materialize any still-pending invitations now that this email has a
       // verified app profile; dedupe keys make repeated sign-ins harmless.
-      await db.transaction(async (tx) => {
+      const materialized = await db.transaction(async (tx) => {
+        const created: PersistedNotification[] = [];
         const pending = await tx.select({ id: invitationsTable.id, inviterId: invitationsTable.inviterId,
           inviterName: usersTable.name, inviterEmail: usersTable.email })
           .from(invitationsTable)
@@ -115,9 +122,15 @@ router.post(
           const notification = makeNotificationEvent({ recipientUserId: clerkId, actorUserId: invite.inviterId,
             actorName: inviterDisplayName({ name: invite.inviterName, email: invite.inviterEmail }),
             type: "collaboration_invite", resourceType: "invitation", resourceId: invite.id });
-          if (notification) await tx.insert(notificationsTable).values(notification).onConflictDoNothing();
+          if (!notification) continue;
+          // Only rows actually inserted are pushed, so repeat sign-ins stay silent.
+          const [row] = await tx.insert(notificationsTable).values(notification).onConflictDoNothing()
+            .returning(persistedNotificationColumns);
+          if (row) created.push(row);
         }
+        return created;
       });
+      queuePushNotifications(materialized);
 
       res.json({ success: true, clerkId });
       return;
@@ -252,23 +265,31 @@ router.post("/invite", async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    // Check if invitation already pending
-    const existingInvitation = await db
+    // `invitations_inviter_invited_idx` allows only one row per
+    // (inviter, email), so an expired, declined or used invitation is
+    // re-issued in place below instead of inserting a second row.
+    const [existingInvitation] = await db
       .select()
       .from(invitationsTable)
       .where(
         and(
           eq(invitationsTable.inviterId, clerkId),
           eq(invitationsTable.invitedEmail, normalizedEmail),
-          eq(invitationsTable.status, "pending"),
         ),
       )
       .limit(1);
 
-    if (existingInvitation.length > 0) {
-      res
-        .status(400)
-        .json({ error: "Invitation already pending for this email" });
+    if (
+      existingInvitation?.status === "pending" &&
+      existingInvitation.expiresAt > new Date()
+    ) {
+      // `code` tells the app to offer "Resend Invitation" (POST /invite/resend
+      // with invitedEmail) instead of creating a duplicate.
+      res.status(400).json({
+        error: "Invitation already pending for this email",
+        code: "invitation_pending",
+        invitedEmail: normalizedEmail,
+      });
       return;
     }
 
@@ -303,21 +324,27 @@ router.post("/invite", async (req: Request, res: Response): Promise<void> => {
     // Expiry: 7 days from now
     const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
 
-    const invitation = await db.transaction(async (tx) => {
-      const [created] = await tx.insert(invitationsTable).values({
-        inviterId: clerkId,
-        invitedEmail: normalizedEmail,
-        token,
-        status: "pending",
-        expiresAt,
-      }).returning({ id: invitationsTable.id });
-      if (recipientUser[0]) {
-        const notification = makeNotificationEvent({ recipientUserId: recipientUser[0].clerkId, actorUserId: clerkId,
-          actorName: inviterDisplayName(user[0]), type: "collaboration_invite", resourceType: "invitation", resourceId: created.id });
-        if (notification) await tx.insert(notificationsTable).values(notification).onConflictDoNothing();
-      }
-      return created;
+    const invitationNotification = await db.transaction(async (tx) => {
+      const issued = { token, status: "pending" as const, expiresAt, acceptedAt: null, acceptedByUserId: null };
+      const [created] = existingInvitation
+        ? await tx.update(invitationsTable).set(issued)
+            .where(eq(invitationsTable.id, existingInvitation.id)).returning({ id: invitationsTable.id })
+        : await tx.insert(invitationsTable).values({ inviterId: clerkId, invitedEmail: normalizedEmail, ...issued })
+            .returning({ id: invitationsTable.id });
+      if (!recipientUser[0]) return undefined;
+      const notification = makeNotificationEvent({ recipientUserId: recipientUser[0].clerkId, actorUserId: clerkId,
+        actorName: inviterDisplayName(user[0]), type: "collaboration_invite", resourceType: "invitation", resourceId: created.id });
+      if (!notification) return undefined;
+      // A re-issued invitation keeps its id (and so its dedupe key); surface
+      // the earlier notification again as unread instead of dropping it.
+      const [row] = await tx.insert(notificationsTable).values(notification).onConflictDoUpdate({
+        target: [notificationsTable.recipientUserId, notificationsTable.dedupeKey],
+        targetWhere: sql`${notificationsTable.dedupeKey} is not null`,
+        set: { read: false, readAt: null, createdAt: new Date(), message: notification.message },
+      }).returning(persistedNotificationColumns);
+      return row;
     });
+    queuePushNotifications([invitationNotification]);
 
     const invitationLink = buildInvitationLink(token);
 
@@ -331,12 +358,16 @@ router.post("/invite", async (req: Request, res: Response): Promise<void> => {
       expiresAt,
     });
 
+    // Creation and delivery are reported separately: the invitation exists
+    // (and its link works) even when SMTP fails.
     res.json({
       success: true,
+      invitationCreated: true,
       token,
       invitationLink,
       invitedEmail: normalizedEmail,
       expiresAt,
+      emailDelivery: { status: delivery.status, message: delivery.error ?? null },
       emailSent: delivery.sent,
       emailError: delivery.error ?? null,
       mailConfigured: isMailConfigured(),
@@ -351,51 +382,61 @@ router.post("/invite", async (req: Request, res: Response): Promise<void> => {
 
 /**
  * POST /api/teammates/invite/resend
- * Re-send the email for an invitation the caller already created.
+ * Re-send the email for an invitation the caller already created, reusing its
+ * existing token (no new row, no new token).
  *
- * Body: { token: string }
+ * Body: { invitedEmail: string } or { token: string }
+ *
+ * The lookup is always scoped to inviterId = caller, so another user's
+ * invitation is indistinguishable from a missing one. Responds 200 whenever
+ * the invitation is valid; email success or failure is reported separately in
+ * `emailDelivery`, so a failed send never looks like a missing invitation.
  */
 router.post(
   "/invite/resend",
   async (req: Request, res: Response): Promise<void> => {
     try {
       const clerkId = getClerkId(req);
-      const { token } = req.body;
+      const token = typeof req.body?.token === "string" ? req.body.token : "";
+      const invitedEmail =
+        typeof req.body?.invitedEmail === "string"
+          ? req.body.invitedEmail.trim().toLowerCase()
+          : "";
 
-      if (!token) {
-        res.status(400).json({ error: "Token is required" });
+      if (!token && !invitedEmail) {
+        res.status(400).json({ error: "Email or token is required" });
         return;
       }
 
-      const invitation = await db
+      const [inv] = await db
         .select()
         .from(invitationsTable)
         .where(
           and(
-            eq(invitationsTable.token, token),
             eq(invitationsTable.inviterId, clerkId),
+            token
+              ? eq(invitationsTable.token, token)
+              : eq(invitationsTable.invitedEmail, invitedEmail),
           ),
         )
         .limit(1);
 
-      if (!invitation.length) {
-        res.status(404).json({ error: "Invitation not found" });
-        return;
-      }
-
-      const inv = invitation[0];
-
-      if (inv.status !== "pending") {
-        res.status(400).json({ error: `Invitation already ${inv.status}` });
-        return;
-      }
-
-      if (new Date() > inv.expiresAt) {
-        await db
-          .update(invitationsTable)
-          .set({ status: "expired" })
-          .where(eq(invitationsTable.id, inv.id));
-        res.status(400).json({ error: "Invitation has expired" });
+      const check = checkResendable(inv, clerkId);
+      if (!check.ok) {
+        if (check.markExpired && inv) {
+          // Existing lifecycle: mark it expired; POST /invite then re-issues
+          // the row with a fresh token rather than reusing this link.
+          await db
+            .update(invitationsTable)
+            .set({ status: "expired" })
+            .where(
+              and(
+                eq(invitationsTable.id, inv.id),
+                eq(invitationsTable.status, "pending"),
+              ),
+            );
+        }
+        res.status(check.httpStatus).json({ error: check.error, code: check.code });
         return;
       }
 
@@ -410,26 +451,29 @@ router.post(
         return;
       }
 
-      const delivery = await sendInvitationEmail({
-        to: inv.invitedEmail,
-        inviterName: inviterDisplayName(inviter[0]),
-        inviterEmail: inviter[0].email,
-        invitationLink: buildInvitationLink(inv.token),
-        expiresAt: inv.expiresAt,
-      });
+      const invitationLink = buildInvitationLink(inv.token);
+      const delivery = await resendFlight(inv.id, () =>
+        sendInvitationEmail({
+          to: inv.invitedEmail,
+          inviterName: inviterDisplayName(inviter[0]),
+          inviterEmail: inviter[0].email,
+          invitationLink,
+          expiresAt: inv.expiresAt,
+        }),
+      );
 
-      if (!delivery.sent) {
-        res.status(502).json({
-          error: delivery.error || "Failed to send the invitation email.",
-          mailConfigured: isMailConfigured(),
-        });
-        return;
-      }
-
+      // The link goes only to its own inviter (checked above), who already
+      // received it when the invitation was created.
       res.json({
         success: true,
-        emailSent: true,
+        invitationValid: true,
+        invitationLink,
         invitedEmail: inv.invitedEmail,
+        expiresAt: inv.expiresAt,
+        emailDelivery: { status: delivery.status, message: delivery.error ?? null },
+        emailSent: delivery.sent,
+        emailError: delivery.error ?? null,
+        mailConfigured: isMailConfigured(),
       });
       return;
     } catch (error) {
@@ -462,7 +506,9 @@ router.get(
         return;
       }
 
-      // Get pending invitations for this user's email
+      // Get still-valid pending invitations for this user's email. Expired
+      // rows keep status "pending" until someone touches them, so filter on
+      // expiresAt as well; otherwise they show up and fail on accept.
       const invitations = await db
         .select()
         .from(invitationsTable)
@@ -470,6 +516,8 @@ router.get(
           and(
             eq(invitationsTable.invitedEmail, user[0].email),
             eq(invitationsTable.status, "pending"),
+            gt(invitationsTable.expiresAt, new Date()),
+            ne(invitationsTable.inviterId, clerkId),
           ),
         );
 
@@ -589,7 +637,7 @@ router.post("/accept", async (req: Request, res: Response): Promise<void> => {
     const accepted = await db.transaction(async (tx) => {
       const [changed] = await tx.update(invitationsTable).set({ status: "accepted", acceptedAt: new Date(), acceptedByUserId: clerkId })
         .where(and(eq(invitationsTable.id, inv.id), eq(invitationsTable.status, "pending"))).returning({ id: invitationsTable.id });
-      if (!changed) return false;
+      if (!changed) return null;
       await tx.insert(teammatesTable).values([
         { userId: inv.inviterId, teammateUserId: clerkId },
         { userId: clerkId, teammateUserId: inv.inviterId },
@@ -597,13 +645,16 @@ router.post("/accept", async (req: Request, res: Response): Promise<void> => {
       const acceptingName = user[0].name?.trim() || user[0].email.split("@")[0];
       const notification = makeNotificationEvent({ recipientUserId: inv.inviterId, actorUserId: clerkId, actorName: acceptingName,
         type: "collaboration_accepted", resourceType: "invitation", resourceId: inv.id });
-      if (notification) await tx.insert(notificationsTable).values(notification).onConflictDoNothing();
-      return true;
+      const [row] = notification
+        ? await tx.insert(notificationsTable).values(notification).onConflictDoNothing().returning(persistedNotificationColumns)
+        : [];
+      return { notification: row };
     });
     if (!accepted) {
       res.status(409).json({ error: "Invitation has already been accepted or is no longer pending." });
       return;
     }
+    queuePushNotifications([accepted.notification]);
 
     res.json({
       success: true,
@@ -618,6 +669,60 @@ router.post("/accept", async (req: Request, res: Response): Promise<void> => {
   } catch (error) {
     console.error("Error accepting invitation:", error);
     res.status(500).json({ error: "Failed to accept invitation" });
+    return;
+  }
+});
+
+/**
+ * POST /api/teammates/reject
+ * Decline an invitation addressed to the authenticated user's email.
+ *
+ * Body: { token: string }
+ */
+router.post("/reject", async (req: Request, res: Response): Promise<void> => {
+  try {
+    const clerkId = getClerkId(req);
+    const { token } = req.body;
+
+    if (!token || typeof token !== "string") {
+      res.status(400).json({ error: "Token is required" });
+      return;
+    }
+
+    const user = await db
+      .select()
+      .from(usersTable)
+      .where(eq(usersTable.clerkId, clerkId))
+      .limit(1);
+
+    if (!user.length) {
+      res.status(404).json({ error: "User not found" });
+      return;
+    }
+
+    // Only the invited address may decline, and only while still pending.
+    const [declined] = await db
+      .update(invitationsTable)
+      .set({ status: "declined" })
+      .where(
+        and(
+          eq(invitationsTable.token, token),
+          eq(invitationsTable.invitedEmail, user[0].email),
+          eq(invitationsTable.status, "pending"),
+        ),
+      )
+      .returning({ id: invitationsTable.id });
+
+    if (!declined) {
+      res.status(404).json({ error: "Invitation not found or no longer pending" });
+      return;
+    }
+
+    res.json({ success: true });
+    return;
+  } catch (error) {
+    console.error("Error declining invitation:", error);
+    res.status(500).json({ error: "Failed to decline invitation" });
     return;
   }
 });

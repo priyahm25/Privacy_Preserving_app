@@ -12,6 +12,7 @@
  */
 
 import { unzipSync } from "fflate";
+import { ScanFormatError } from "../officeValidation";
 
 export interface WordFeatures {
   ole_object_count: number;
@@ -175,10 +176,13 @@ export function extractWordFeatures(
   } catch {
     // If unzip fails, it may be a legacy .doc (OLE compound) or corrupt
     // Return what we have — the model fills missing with 0
-    return features;
+    throw new ScanFormatError("CORRUPTED", "The Word document is not a readable DOCX package.");
   }
 
   const fileNames = Object.keys(files);
+  if (!files["[Content_Types].xml"] || !files["word/document.xml"]) {
+    throw new ScanFormatError("CORRUPTED", "The DOCX package is missing required document parts.");
+  }
 
   // macro_present: check for vbaProject.bin or macros/ directory
   features.macro_present = fileNames.some(

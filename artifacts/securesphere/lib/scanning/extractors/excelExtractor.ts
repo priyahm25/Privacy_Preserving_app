@@ -9,6 +9,7 @@
  */
 
 import { unzipSync } from 'fflate';
+import { ScanFormatError } from '../officeValidation';
 
 export interface ExcelFeatures {
   file_size: number;
@@ -156,10 +157,17 @@ export function extractExcelFeatures(
   try {
     files = unzipSync(fileBytes);
   } catch {
-    return features;
+    throw new ScanFormatError("CORRUPTED", "The spreadsheet is not a readable XLSX package.");
   }
 
   const fileNames = Object.keys(files);
+  if (
+    !files['[Content_Types].xml'] ||
+    !files['xl/workbook.xml'] ||
+    !fileNames.some((name) => /^xl\/worksheets\/sheet\d+\.xml$/.test(name))
+  ) {
+    throw new ScanFormatError("CORRUPTED", "The XLSX package is missing required workbook parts.");
+  }
 
   // has_macro
   features.has_macro = fileNames.some(

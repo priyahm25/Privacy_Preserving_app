@@ -139,6 +139,26 @@ function keyFingerprint(publicKey: JsonWebKey): string {
   return JSON.stringify({ kty: publicKey.kty, crv: publicKey.crv, x: publicKey.x, y: publicKey.y });
 }
 
+/** Verify the local private key can perform ECDH and matches the API's active public key. */
+export async function verifyLocalDeviceKey(userId: string, serverPublicKey: JsonWebKey): Promise<boolean> {
+  const stored = await load(userId);
+  if (!stored) return false;
+  try {
+    const record = JSON.parse(stored) as { privateKey?: JsonWebKey; publicKey?: JsonWebKey };
+    if (!record.privateKey?.d || !record.publicKey || keyFingerprint(record.publicKey) !== keyFingerprint(serverPublicKey)) return false;
+    const ownPrivate = await subtle().importKey("jwk", record.privateKey, { name: "ECDH", namedCurve: "P-256" }, false, ["deriveBits"]);
+    const ownPublic = await subtle().importKey("jwk", record.publicKey, { name: "ECDH", namedCurve: "P-256" }, false, []);
+    const challenge = await subtle().generateKey({ name: "ECDH", namedCurve: "P-256" }, true, ["deriveBits"]);
+    const challengePublic = await subtle().exportKey("jwk", challenge.publicKey);
+    const importedChallengePublic = await subtle().importKey("jwk", challengePublic, { name: "ECDH", namedCurve: "P-256" }, false, []);
+    const localProof = new Uint8Array(await subtle().deriveBits({ name: "ECDH", public: importedChallengePublic }, ownPrivate, 256));
+    const challengeProof = new Uint8Array(await subtle().deriveBits({ name: "ECDH", public: ownPublic }, challenge.privateKey, 256));
+    return localProof.length === challengeProof.length && localProof.every((value, index) => value === challengeProof[index]);
+  } catch {
+    return false;
+  }
+}
+
 async function errorMessage(response: Response, fallback: string): Promise<string> {
   const body = await response.json().catch(() => null);
   return body && typeof body === "object" && "error" in body && typeof body.error === "string"
@@ -155,26 +175,9 @@ export function provisionDeviceKey(userId: string, request: AuthenticatedRequest
   if (active) return active;
 
   const task = (async () => {
-    const current = await request("/api/keys/me");
-    if (current.ok) {
-      const server = await current.json() as { publicKey?: JsonWebKey | string };
-      if (!await load(userId)) {
-        throw new Error("This device does not have the private key matching the active device key. Clear this device's app data and sign in again.");
-      }
-      const local = await ensureDeviceKey(userId);
-      const serverKey = typeof server.publicKey === "string" ? JSON.parse(server.publicKey) as JsonWebKey : server.publicKey;
-      if (!serverKey || keyFingerprint(local.publicKey) !== keyFingerprint(serverKey)) {
-        throw new Error("This device does not have the private key matching the active device key. Clear this device's app data and sign in again.");
-      }
-      return;
-    }
-    if (current.status !== 404) {
-      throw new Error(await errorMessage(current, "Could not check the active device key."));
-    }
-
-    // No active server key means a first run or a revoked key. Generate a fresh
-    // local pair so a revoked public key is never reused.
-    const { publicKey } = await ensureDeviceKey(userId, { replace: true });
+    // Register this installation's existing local key idempotently. This lets
+    // one account retain independent keys on multiple devices.
+    const { publicKey } = await ensureDeviceKey(userId);
     const registration = await request("/api/keys/register", {
       method: "POST",
       body: JSON.stringify({ publicKey }),
@@ -302,4 +305,56 @@ export async function unwrapFileKey(userId: string, ownerPublicKey: JsonWebKey, 
   const wrapping = await subtle().deriveKey({ name: "HKDF", hash: "SHA-256", salt: toArrayBuffer(new TextEncoder().encode(fileId)), info: toArrayBuffer(new TextEncoder().encode("SecureSphere file-key wrap v1")) }, material, { name: "AES-GCM", length: 256 }, false, ["decrypt"]);
   const raw = new Uint8Array(await subtle().decrypt({ name: "AES-GCM", iv: toArrayBuffer(fromB64(wrappingIv)) }, wrapping, toArrayBuffer(fromB64(wrappedFileKey))));
   return Array.from(raw).map(x => x.toString(16).padStart(2, "0")).join("");
+}
+
+export interface ChatDeviceKey { id: string; publicKey: JsonWebKey | string }
+const parseKey = (key: JsonWebKey | string): JsonWebKey => typeof key === "string" ? JSON.parse(key) as JsonWebKey : key;
+const fromB64Text = (value: string) => Uint8Array.from(atob(value), (c) => c.charCodeAt(0));
+
+/** Encrypt a message locally and wrap its fresh AES key for each active device. */
+export async function encryptChatMessage(userId: string, senderDeviceKeyId: string, devices: ChatDeviceKey[], plaintext: string) {
+  if (!plaintext.trim() || plaintext.length > 10_000) throw new Error("Message must contain 1–10,000 characters.");
+  const local = await load(userId);
+  if (!local) throw new Error("This device's secure key is unavailable.");
+  const record = JSON.parse(local) as { privateKey?: JsonWebKey };
+  if (!record.privateKey?.d) throw new Error("This device's secure key is unavailable.");
+  const subtleCrypto = subtle();
+  const msgId = crypto.randomUUID();
+  const rawMessageKey = crypto.getRandomValues(new Uint8Array(32));
+  const messageKey = await subtleCrypto.importKey("raw", toArrayBuffer(rawMessageKey), { name: "AES-GCM" }, false, ["encrypt"]);
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const ciphertext = await subtleCrypto.encrypt({ name: "AES-GCM", iv: toArrayBuffer(iv) }, messageKey, toArrayBuffer(new TextEncoder().encode(plaintext)));
+  const ownPrivate = await subtleCrypto.importKey("jwk", record.privateKey, { name: "ECDH", namedCurve: "P-256" }, false, ["deriveBits"]);
+  const keyCopies = await Promise.all(devices.map(async (device) => {
+    if (!device.id || device.id.length > 64) throw new Error("Invalid recipient device key id.");
+    const publicKey = await subtleCrypto.importKey("jwk", parseKey(device.publicKey), { name: "ECDH", namedCurve: "P-256" }, false, []);
+    const sharedSecret = await subtleCrypto.deriveBits({ name: "ECDH", public: publicKey }, ownPrivate, 256);
+    const material = await subtleCrypto.importKey("raw", toArrayBuffer(new Uint8Array(sharedSecret)), "HKDF", false, ["deriveKey"]);
+    const wrappingKey = await subtleCrypto.deriveKey({ name: "HKDF", hash: "SHA-256", salt: toArrayBuffer(new TextEncoder().encode(`SecureSphere/chat/message-key/v1/${msgId}`)), info: toArrayBuffer(new TextEncoder().encode("SecureSphere/chat/ECDH-P256/AES-256-GCM-wrap/v1")) }, material, { name: "AES-GCM", length: 256 }, false, ["encrypt"]);
+    const wrapIv = crypto.getRandomValues(new Uint8Array(12));
+    const wrapped = await subtleCrypto.encrypt({ name: "AES-GCM", iv: toArrayBuffer(wrapIv) }, wrappingKey, toArrayBuffer(rawMessageKey));
+    return { deviceKeyId: device.id, wrappedKey: b64(wrapped), wrappingIv: b64(wrapIv) };
+  }));
+  rawMessageKey.fill(0);
+  return { clientMessageId: msgId, ciphertext: b64(ciphertext), iv: b64(iv), keyCopies };
+}
+
+/** Unwrap and decrypt exclusively on the recipient device. */
+export async function decryptChatMessage(userId: string, message: { id: string; senderDevicePublicKey: JsonWebKey | string; ciphertext: string; iv: string; wrappedKey: string; wrappingIv: string }): Promise<string> {
+  const local = await load(userId);
+  if (!local) throw new Error("This device's secure key is unavailable.");
+  const record = JSON.parse(local) as { privateKey?: JsonWebKey };
+  if (!record.privateKey?.d) throw new Error("This device's secure key is unavailable.");
+  const subtleCrypto = subtle();
+  const privateKey = await subtleCrypto.importKey("jwk", record.privateKey, { name: "ECDH", namedCurve: "P-256" }, false, ["deriveBits"]);
+  const senderKey = await subtleCrypto.importKey("jwk", parseKey(message.senderDevicePublicKey), { name: "ECDH", namedCurve: "P-256" }, false, []);
+  const sharedSecret = await subtleCrypto.deriveBits({ name: "ECDH", public: senderKey }, privateKey, 256);
+  const material = await subtleCrypto.importKey("raw", toArrayBuffer(new Uint8Array(sharedSecret)), "HKDF", false, ["deriveKey"]);
+  const wrappingKey = await subtleCrypto.deriveKey({ name: "HKDF", hash: "SHA-256", salt: toArrayBuffer(new TextEncoder().encode(`SecureSphere/chat/message-key/v1/${message.id}`)), info: toArrayBuffer(new TextEncoder().encode("SecureSphere/chat/ECDH-P256/AES-256-GCM-wrap/v1")) }, material, { name: "AES-GCM", length: 256 }, false, ["decrypt"]);
+  const rawMessageKey = new Uint8Array(await subtleCrypto.decrypt({ name: "AES-GCM", iv: toArrayBuffer(fromB64Text(message.wrappingIv)) }, wrappingKey, toArrayBuffer(fromB64Text(message.wrappedKey))));
+  if (rawMessageKey.length !== 32) throw new Error("Invalid wrapped message key.");
+  const messageKey = await subtleCrypto.importKey("raw", toArrayBuffer(rawMessageKey), { name: "AES-GCM" }, false, ["decrypt"]);
+  rawMessageKey.fill(0);
+  const plaintext = await subtleCrypto.decrypt({ name: "AES-GCM", iv: toArrayBuffer(fromB64Text(message.iv)) }, messageKey, toArrayBuffer(fromB64Text(message.ciphertext)));
+  return new TextDecoder().decode(plaintext);
 }

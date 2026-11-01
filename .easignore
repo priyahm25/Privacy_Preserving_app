@@ -1,0 +1,116 @@
+# EAS Build upload rules (eas-cli reads only this file, from the git root).
+#
+# When .easignore exists, eas-cli uses it INSTEAD of every .gitignore, so it
+# repeats their rules here. Keep it in sync with:
+#   /.gitignore
+#   /artifacts/securesphere/.gitignore
+#
+# The only intended difference from Git: artifacts/securesphere/google-services.json
+# (Firebase config for FCM push) IS uploaded to EAS Build but stays out of Git.
+# Uploading untracked files relies on requireCommit being false (the default).
+
+# ---------------------------------------------------------------------------
+# From /.gitignore (repository root)
+# ---------------------------------------------------------------------------
+
+# compiled output
+dist
+tmp
+out-tsc
+*.tsbuildinfo
+.expo
+.expo-shared
+
+# dependencies
+node_modules
+
+# secrets - DATABASE_URL, CLERK_SECRET_KEY, FILE_ENCRYPTION_KEY, SMTP_PASS...
+.env
+.env.*
+!.env.example
+
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# misc
+/.sass-cache
+/connect.lock
+/coverage
+/libpeerconnection.log
+npm-debug.log
+yarn-error.log
+testem.log
+/typings
+
+# System Files
+.DS_Store
+Thumbs.db
+
+.cursor/rules/nx-rules.mdc
+.github/instructions/nx.instructions.md
+
+# Replit
+.cache/
+.local/
+
+# Python virtual environments
+.venv/
+__pycache__/
+
+# ---------------------------------------------------------------------------
+# From /artifacts/securesphere/.gitignore, scoped to that directory
+# (google-services.json deliberately omitted - see header)
+# ---------------------------------------------------------------------------
+
+# dependencies
+artifacts/securesphere/**/node_modules/
+
+# Expo
+artifacts/securesphere/**/.expo/
+artifacts/securesphere/**/dist/
+artifacts/securesphere/**/web-build/
+artifacts/securesphere/**/expo-env.d.ts
+
+# Native
+artifacts/securesphere/**/ios/
+artifacts/securesphere/**/android/
+artifacts/securesphere/**/*.orig.*
+artifacts/securesphere/**/*.jks
+artifacts/securesphere/**/*.p8
+artifacts/securesphere/**/*.p12
+artifacts/securesphere/**/*.key
+artifacts/securesphere/**/*.mobileprovision
+
+# Metro
+artifacts/securesphere/**/.metro-health-check*
+
+# debug
+artifacts/securesphere/**/npm-debug.*
+artifacts/securesphere/**/yarn-debug.*
+artifacts/securesphere/**/yarn-error.*
+
+# macOS
+artifacts/securesphere/**/.DS_Store
+artifacts/securesphere/**/*.pem
+
+# local env files
+artifacts/securesphere/**/.env*.local
+
+# typescript
+artifacts/securesphere/**/*.tsbuildinfo
+artifacts/securesphere/**/.vercel
+
+artifacts/securesphere/**/.env

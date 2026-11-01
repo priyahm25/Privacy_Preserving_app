@@ -35,7 +35,7 @@ async function perform<T>(operation: string, request: () => Promise<Response>, r
 
 export interface AppNotification {
   id: string;
-  type: "file_shared" | "collaboration_invite" | "collaboration_accepted";
+  type: "file_shared" | "collaboration_invite" | "collaboration_accepted" | "chat_message";
   message: string;
   resourceType: string | null;
   resourceId: string | null;

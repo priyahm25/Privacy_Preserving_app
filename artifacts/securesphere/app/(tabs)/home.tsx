@@ -21,6 +21,8 @@ import { UserAvatar } from "@/components/UserCard";
 import type { SecureFile } from "@/data/mockData";
 import { formatBytes, useFilesApi } from "@/lib/filesApi";
 import type { SecureFileRecord } from "@/lib/filesApi";
+import { useProfileApi, type ProfileSummary } from "@/lib/profileApi";
+import { calculateSecurityScore, formatStorageBytes } from "@/lib/profileSecurity";
 
 type QuickAction = {
   icon: string;
@@ -70,13 +72,20 @@ function toFileCard(record: SecureFileRecord): SecureFile {
 export default function Home() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
-  const { currentUser, notificationCount } = useApp();
+  const { currentUser, notificationCount, isAuthenticated } = useApp();
   const api = useFilesApi();
   const apiRef = useRef(api);
   apiRef.current = api;
+  const profileApi = useProfileApi();
+  const profileApiRef = useRef(profileApi);
+  profileApiRef.current = profileApi;
   const [files, setFiles] = useState<SecureFileRecord[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [profileSummary, setProfileSummary] = useState<ProfileSummary | null>(null);
+  const [deviceKeyStatus, setDeviceKeyStatus] = useState<"passed" | "failed" | "unknown">("unknown");
+  const [summaryLoading, setSummaryLoading] = useState(true);
+  const [summaryError, setSummaryError] = useState(false);
 
   const loadFiles = useCallback(async () => {
     setIsLoading(true);
@@ -95,10 +104,38 @@ export default function Home() {
     }
   }, []);
 
+  const loadProfileSummary = useCallback(async (isCurrentFocus: () => boolean) => {
+    setSummaryLoading(true);
+    setSummaryError(false);
+    if (!isAuthenticated || !currentUser.id || currentUser.id === "current") {
+      setProfileSummary(null);
+      setDeviceKeyStatus("unknown");
+      setSummaryLoading(false);
+      return;
+    }
+
+    const [summaryResult, keyResult] = await Promise.allSettled([
+      profileApiRef.current.getSummary(),
+      profileApiRef.current.checkDeviceKey(currentUser.id),
+    ]);
+    if (!isCurrentFocus()) return;
+    if (summaryResult.status === "fulfilled") {
+      setProfileSummary(summaryResult.value);
+    } else {
+      setProfileSummary(null);
+      setSummaryError(true);
+    }
+    setDeviceKeyStatus(keyResult.status === "fulfilled" ? keyResult.value : "unknown");
+    setSummaryLoading(false);
+  }, [currentUser.id, isAuthenticated]);
+
   useFocusEffect(
     useCallback(() => {
+      let isCurrentFocus = true;
       void loadFiles();
-    }, [loadFiles]),
+      void loadProfileSummary(() => isCurrentFocus);
+      return () => { isCurrentFocus = false; };
+    }, [loadFiles, loadProfileSummary]),
   );
 
   const recentFiles = [...files]
@@ -115,7 +152,24 @@ export default function Home() {
 
   const topPad = Platform.OS === "web" ? 67 : insets.top;
 
-  const storagePercent = currentUser.storageUsed / currentUser.storageTotal;
+  const securityScore = calculateSecurityScore({
+    deviceKey: deviceKeyStatus,
+    fileCount: profileSummary?.files.count ?? null,
+    encryptedFileCount: profileSummary?.files.encryptedCount ?? null,
+    shareCount: profileSummary?.shares.count ?? null,
+    wrappedShareCount: profileSummary?.shares.wrappedKeyCount ?? null,
+  });
+
+  const encryptionMetadataText = summaryLoading
+    ? "Checking encryption metadata…"
+    : summaryError || !profileSummary
+      ? "Encryption metadata unavailable"
+      : profileSummary.files.count === 0
+        ? "No files to verify"
+        : `${profileSummary.files.encryptedCount} of ${profileSummary.files.count} files have valid encryption metadata`;
+  const encryptionMetadataColor = profileSummary && profileSummary.files.count > 0
+    ? profileSummary.files.encryptedCount === profileSummary.files.count ? colors.success : colors.warning
+    : colors.mutedForeground;
 
   /**
    * Share starts at the device file explorer. Once a file is chosen it moves to
@@ -198,7 +252,16 @@ export default function Home() {
               >
                 Security Score
               </Text>
-              <SecurityScore score={currentUser.securityScore} size={130} />
+              {securityScore.score === null ? (
+                <View style={[styles.scoreUnknown, { borderColor: colors.muted }]}>
+                  <Text style={[styles.scoreUnknownValue, { color: colors.mutedForeground }]}>—</Text>
+                  <Text style={[styles.scoreUnknownLabel, { color: colors.mutedForeground }]}>
+                    {summaryLoading ? "Loading" : "Unavailable"}
+                  </Text>
+                </View>
+              ) : (
+                <SecurityScore score={securityScore.score} size={130} />
+              )}
               <TouchableOpacity
                 style={[styles.improveBtn, { borderColor: colors.border }]}
               >
@@ -224,7 +287,7 @@ export default function Home() {
                 <Text
                   style={[styles.storageUsed, { color: colors.foreground }]}
                 >
-                  {currentUser.storageUsed} GB
+                  {profileSummary ? formatStorageBytes(profileSummary.storageBytes) : summaryLoading ? "Loading…" : "Unavailable"}
                 </Text>
                 <Text
                   style={[
@@ -232,44 +295,38 @@ export default function Home() {
                     { color: colors.mutedForeground },
                   ]}
                 >
-                  of {currentUser.storageTotal} GB
+                  bytes stored
                 </Text>
               </View>
               <View
                 style={[styles.storageBar, { backgroundColor: colors.muted }]}
-              >
-                <View
-                  style={[
-                    styles.storageBarFill,
-                    {
-                      width: `${storagePercent * 100}%`,
-                      backgroundColor:
-                        storagePercent > 0.8 ? colors.warning : colors.primary,
-                    },
-                  ]}
-                />
-              </View>
+              />
               <Text
                 style={[styles.storagePct, { color: colors.mutedForeground }]}
               >
-                {Math.round(storagePercent * 100)}% used
+                No quota configured
               </Text>
 
               <View style={styles.encryptionStatus}>
                 <Ionicons
                   name="shield-checkmark"
                   size={14}
-                  color={colors.success}
+                  color={encryptionMetadataColor}
                 />
                 <Text
                   style={[
                     styles.encryptionStatusText,
-                    { color: colors.success },
+                    { color: encryptionMetadataColor },
                   ]}
                 >
-                  AES-256 Active
+                  {encryptionMetadataText}
                 </Text>
               </View>
+              {summaryError && (
+                <Text style={[styles.summaryWarning, { color: colors.warning }]}>
+                  Account security and storage data could not be loaded.
+                </Text>
+              )}
             </View>
           </View>
         </GlassCard>
@@ -443,6 +500,16 @@ const styles = StyleSheet.create({
   scoreCard: { marginBottom: 24 },
   scoreRow: { flexDirection: "row", gap: 16 },
   scoreLeft: { flex: 1, alignItems: "center", gap: 8 },
+  scoreUnknown: {
+    width: 130,
+    height: 130,
+    borderRadius: 65,
+    borderWidth: 10,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  scoreUnknownValue: { fontSize: 36, fontFamily: "Inter_700Bold", lineHeight: 40 },
+  scoreUnknownLabel: { fontSize: 11, fontFamily: "Inter_500Medium", marginTop: 2 },
   scoreRight: { flex: 1, gap: 8, justifyContent: "center" },
   sectionLabel: { fontSize: 12, fontFamily: "Inter_500Medium" },
   improveBtn: {
@@ -459,8 +526,8 @@ const styles = StyleSheet.create({
   storageUsed: { fontSize: 22, fontFamily: "Inter_700Bold" },
   storageMeta: { fontSize: 12, fontFamily: "Inter_400Regular" },
   storageBar: { height: 6, borderRadius: 3, overflow: "hidden" },
-  storageBarFill: { height: "100%", borderRadius: 3 },
   storagePct: { fontSize: 11, fontFamily: "Inter_400Regular" },
+  summaryWarning: { fontSize: 11, fontFamily: "Inter_400Regular" },
   encryptionStatus: {
     flexDirection: "row",
     alignItems: "center",

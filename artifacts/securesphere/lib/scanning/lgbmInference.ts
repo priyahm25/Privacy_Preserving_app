@@ -75,13 +75,14 @@ export function lgbmPredict(model: LGBMModel, featureVector: number[]): number {
     );
   }
 
-  // LightGBM stores the learning-rate multiplier on each tree. Leaf values
-  // from `dump_model()` are pre-shrinkage, so omitting this factor amplifies
-  // a 300-tree model by roughly 20x and makes ordinary files saturate at a
-  // malicious probability near 1.0.
+  // Leaf values from LightGBM's `dump_model()` already include the learning
+  // rate; `shrinkage` is informational. Multiplying by it again squashed every
+  // score toward the first tree's base rate (e.g. ~0.65 for PDFs), which made
+  // ordinary benign PDFs score just above 0.5. Verified against
+  // booster.predict() by scripts/src/lgbm-parity.test.ts.
   let rawScore = 0;
   for (const tree of model.trees) {
-    rawScore += tree.shrinkage * traverseTree(tree.root, featureVector);
+    rawScore += traverseTree(tree.root, featureVector);
   }
 
   // Apply sigmoid (LightGBM binary objective uses log-loss with sigmoid)

@@ -1,0 +1,21 @@
+{
+  "cli": {
+    "version": ">= 24.3.0",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "pnpm": "9.15.9"
+    },
+    "preview": {
+      "distribution": "internal",
+      "pnpm": "9.15.9"
+    },
+    "production": {
+      "autoIncrement": true,
+      "pnpm": "9.15.9"
+    }
+  }
+}

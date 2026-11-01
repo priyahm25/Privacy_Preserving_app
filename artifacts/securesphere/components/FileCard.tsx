@@ -18,11 +18,43 @@ function getFileIcon(type: FileType): { name: string; color: string } {
 interface FileCardProps {
   file: SecureFile;
   onPress?: () => void;
+  /** 'list' (default) is the full-width row; 'grid' is a compact vertical card. */
+  layout?: 'list' | 'grid';
 }
 
-export function FileCard({ file, onPress }: FileCardProps) {
+export function FileCard({ file, onPress, layout = 'list' }: FileCardProps) {
   const colors = useColors();
   const icon = getFileIcon(file.type);
+
+  if (layout === 'grid') {
+    return (
+      <TouchableOpacity
+        activeOpacity={0.75}
+        onPress={onPress}
+        style={[styles.gridCard, { backgroundColor: colors.card, borderColor: colors.border }]}
+      >
+        <View style={styles.gridTop}>
+          <View style={[styles.gridIconBox, { backgroundColor: `${icon.color}18` }]}>
+            <MaterialCommunityIcons name={icon.name as any} size={22} color={icon.color} />
+          </View>
+          {file.encrypted && (
+            <View style={[styles.badge, { backgroundColor: 'rgba(0, 212, 255, 0.12)', borderColor: 'rgba(0, 212, 255, 0.25)' }]}>
+              <Ionicons name="lock-closed" size={10} color={colors.primary} />
+            </View>
+          )}
+        </View>
+        <Text style={[styles.gridName, { color: colors.foreground }]} numberOfLines={2}>
+          {file.name}
+        </Text>
+        <Text style={[styles.meta, { color: colors.mutedForeground }]} numberOfLines={1}>
+          {file.size}
+        </Text>
+        <Text style={[styles.meta, { color: colors.mutedForeground }]} numberOfLines={1}>
+          {file.modifiedAt}
+        </Text>
+      </TouchableOpacity>
+    );
+  }
 
   return (
     <TouchableOpacity
@@ -99,5 +131,30 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  gridCard: {
+    flex: 1,
+    padding: 12,
+    borderRadius: 14,
+    borderWidth: 1,
+    gap: 6,
+  },
+  gridTop: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 2,
+  },
+  gridIconBox: {
+    width: 40,
+    height: 40,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  gridName: {
+    fontSize: 13,
+    fontFamily: 'Inter_600SemiBold',
+    minHeight: 34,
   },
 });

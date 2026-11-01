@@ -7,6 +7,8 @@ import {
   filesTable,
   fileSearchTokensTable,
   fileSharesTable,
+  fileDisplayNamesTable,
+  fileHiddenTable,
   notificationsTable,
   userDeviceKeysTable,
   type ScanVerdict,
@@ -24,7 +26,9 @@ import {
   StorageOperationError,
 } from "../lib/supabaseStorage";
 import { logger } from "../lib/logger";
+import { applyRename, sanitizeDisplayName, RenameError } from "../lib/fileNaming";
 import { makeNotificationEvent, wasNewlyPersisted } from "../lib/notificationEvents";
+import { persistedNotificationColumns, queuePushNotifications } from "../lib/pushNotifications";
 import {
   MAX_INDEXED_SEARCH_TOKENS,
   MAX_SEARCH_RESULTS,
@@ -224,6 +228,13 @@ router.post(
         return;
       }
 
+      // The client scanner supports exactly these formats; anything else could
+      // only arrive from a modified client.
+      if (!/\.(txt|docx|pdf|pptx)$/i.test(filename)) {
+        res.status(415).json({ error: "Only TXT, DOCX, PDF and PPTX files can be uploaded." });
+        return;
+      }
+
       if (
         scanResult !== "SAFE" ||
         !Number.isFinite(confidence) ||
@@ -417,6 +428,13 @@ router.get("/", async (req: Request, res: Response): Promise<void> => {
       .where(eq(filesTable.ownerClerkId, clerkId))
       .orderBy(desc(filesTable.createdAt));
 
+    // Files the owner hid from their own Shared-by-Me listing (Delete for Me).
+    const ownerHidden = await db
+      .select({ fileId: fileHiddenTable.fileId })
+      .from(fileHiddenTable)
+      .where(eq(fileHiddenTable.userId, clerkId));
+    const hiddenFileIds = new Set(ownerHidden.map((row) => row.fileId));
+
     const ownedShares = await db
       .select({
         fileId: fileSharesTable.fileId,
@@ -439,30 +457,50 @@ router.get("/", async (req: Request, res: Response): Promise<void> => {
         sharedByEmail: usersTable.email,
         permission: fileSharesTable.permission,
         sharedAt: fileSharesTable.createdAt,
+        // The recipient's personal rename, if they set one.
+        displayName: fileDisplayNamesTable.displayName,
       })
       .from(fileSharesTable)
       .innerJoin(filesTable, eq(filesTable.id, fileSharesTable.fileId))
       .innerJoin(usersTable, eq(usersTable.clerkId, fileSharesTable.sharedByUserId))
+      .leftJoin(
+        fileDisplayNamesTable,
+        and(
+          eq(fileDisplayNamesTable.fileId, fileSharesTable.fileId),
+          eq(fileDisplayNamesTable.userId, clerkId),
+        ),
+      )
       .where(eq(fileSharesTable.sharedWithUserId, clerkId))
       .orderBy(desc(filesTable.createdAt));
 
     res.json({
       owned: owned.map((file) => ({
         ...toFileResponse(file),
+        // The owner still sees hidden files in My Files; the Shared screen
+        // filters on this flag so they drop out of Shared by Me only.
+        hiddenFromShared: hiddenFileIds.has(file.id),
         shares: ownedShares
           .filter((share) => share.fileId === file.id)
           .map(({ fileId: _fileId, ...share }) => share),
       })),
-      sharedWithMe: sharedWithMe.map((file) => ({
-        ...toFileResponse(file),
-        permission: file.permission,
-        sharedAt: file.sharedAt,
-        sharedBy: {
-          clerkId: file.sharedById,
-          name: file.sharedByName,
-          email: file.sharedByEmail,
-        },
-      })),
+      sharedWithMe: sharedWithMe.map((file) => {
+        const response = toFileResponse(file);
+        return {
+          ...response,
+          // The recipient's own name overrides the owner's filename for them
+          // only; other recipients and the owner are unaffected.
+          name: file.displayName ?? response.name,
+          originalName: response.name,
+          hasCustomName: file.displayName != null,
+          permission: file.permission,
+          sharedAt: file.sharedAt,
+          sharedBy: {
+            clerkId: file.sharedById,
+            name: file.sharedByName,
+            email: file.sharedByEmail,
+          },
+        };
+      }),
     });
     return;
   } catch (error) {
@@ -741,7 +779,7 @@ router.post(
       const [ownerKey] = await db.select().from(userDeviceKeysTable).where(and(eq(userDeviceKeysTable.id, ownerDeviceKeyId), eq(userDeviceKeysTable.userId, clerkId), isNull(userDeviceKeysTable.revokedAt))).limit(1);
       if (!recipientKey || !ownerKey) { res.status(409).json({ error: "An active device key is required for both users." }); return; }
 
-      await db.transaction(async (tx) => {
+      const shareNotification = await db.transaction(async (tx) => {
         const [createdShare] = await tx.insert(fileSharesTable).values({
           fileId: rows[0].id, sharedWithUserId: recipientId, sharedByUserId: clerkId,
           permission, recipientDeviceKeyId, ownerDeviceKeyId, wrappedFileKey, wrappingIv, wrappingAlgorithm,
@@ -751,13 +789,16 @@ router.post(
           const displayName = actor?.name?.trim() || actor?.email.split("@")[0] || "A teammate";
           const notification = makeNotificationEvent({ recipientUserId: recipientId, actorUserId: clerkId, actorName: displayName,
             type: "file_shared", resourceType: "file", resourceId: rows[0].id });
-          if (notification) await tx.insert(notificationsTable).values(notification).onConflictDoNothing();
-        } else {
-          // Preserve secure key rotation/update behavior on an existing share, without duplicate alerts.
-          await tx.update(fileSharesTable).set({ recipientDeviceKeyId, ownerDeviceKeyId, wrappedFileKey, wrappingIv, wrappingAlgorithm })
-            .where(and(eq(fileSharesTable.fileId, rows[0].id), eq(fileSharesTable.sharedWithUserId, recipientId)));
+          if (!notification) return undefined;
+          const [row] = await tx.insert(notificationsTable).values(notification).onConflictDoNothing().returning(persistedNotificationColumns);
+          return row;
         }
+        // Preserve secure key rotation/update behavior on an existing share, without duplicate alerts.
+        await tx.update(fileSharesTable).set({ recipientDeviceKeyId, ownerDeviceKeyId, wrappedFileKey, wrappingIv, wrappingAlgorithm })
+          .where(and(eq(fileSharesTable.fileId, rows[0].id), eq(fileSharesTable.sharedWithUserId, recipientId)));
+        return undefined;
       });
+      queuePushNotifications([shareNotification]);
 
       res.json({ success: true, sharedWith: recipientIds });
       return;
@@ -813,6 +854,181 @@ router.delete("/:id", async (req: Request, res: Response): Promise<void> => {
   } catch (error) {
     logger.error({ err: error }, "Failed to delete file");
     res.status(500).json({ error: "Failed to delete the file." });
+    return;
+  }
+});
+
+/**
+ * PATCH /api/files/:id
+ * Owner renames their file. Only the filename changes - the extension is
+ * preserved, and encryption, IV, wrapped keys and search tokens are untouched,
+ * so Secure Search and downloads keep working. Owner-only.
+ */
+router.patch("/:id", async (req: Request, res: Response): Promise<void> => {
+  try {
+    const clerkId = getClerkId(req);
+    const fileId = paramId(req);
+    const requested = typeof req.body?.filename === "string" ? req.body.filename : "";
+
+    const [file] = await db
+      .select({ filename: filesTable.filename })
+      .from(filesTable)
+      .where(and(eq(filesTable.id, fileId), eq(filesTable.ownerClerkId, clerkId)))
+      .limit(1);
+
+    // 404 whether the file is missing or owned by someone else, so this can't
+    // probe other users' files.
+    if (!file) {
+      res.status(404).json({ error: "File not found." });
+      return;
+    }
+
+    let filename: string;
+    try {
+      filename = applyRename(file.filename, requested);
+    } catch (error) {
+      res.status(400).json({ error: error instanceof RenameError ? error.message : "Invalid file name." });
+      return;
+    }
+
+    const [updated] = await db
+      .update(filesTable)
+      .set({ filename })
+      .where(and(eq(filesTable.id, fileId), eq(filesTable.ownerClerkId, clerkId)))
+      .returning(fileColumns);
+
+    res.json({ success: true, file: toFileResponse(updated) });
+    return;
+  } catch (error) {
+    logger.error({ err: error }, "Failed to rename file");
+    res.status(500).json({ error: "Failed to rename the file." });
+    return;
+  }
+});
+
+/**
+ * PATCH /api/files/:id/display-name
+ * A recipient sets their own display name for a file shared with them. Changes
+ * only this user's view - never the owner's filename or any other recipient's.
+ */
+router.patch("/:id/display-name", async (req: Request, res: Response): Promise<void> => {
+  try {
+    const clerkId = getClerkId(req);
+    const fileId = paramId(req);
+
+    let displayName: string;
+    try {
+      displayName = sanitizeDisplayName(typeof req.body?.name === "string" ? req.body.name : "");
+    } catch (error) {
+      res.status(400).json({ error: error instanceof RenameError ? error.message : "Invalid name." });
+      return;
+    }
+
+    // Only someone the file was shared with may set a personal name for it.
+    const [share] = await db
+      .select({ id: fileSharesTable.id })
+      .from(fileSharesTable)
+      .where(and(eq(fileSharesTable.fileId, fileId), eq(fileSharesTable.sharedWithUserId, clerkId)))
+      .limit(1);
+
+    if (!share) {
+      res.status(404).json({ error: "Shared file not found." });
+      return;
+    }
+
+    await db
+      .insert(fileDisplayNamesTable)
+      .values({ fileId, userId: clerkId, displayName })
+      .onConflictDoUpdate({
+        target: [fileDisplayNamesTable.fileId, fileDisplayNamesTable.userId],
+        set: { displayName, updatedAt: new Date() },
+      });
+
+    res.json({ success: true, name: displayName });
+    return;
+  } catch (error) {
+    logger.error({ err: error }, "Failed to set display name");
+    res.status(500).json({ error: "Failed to rename the file." });
+    return;
+  }
+});
+
+/**
+ * POST /api/files/:id/hide
+ * Owner "Delete for Me": hides an owned file from the owner's own Shared-by-Me
+ * listing. The file, its shares, keys and storage are untouched, and every
+ * recipient keeps access. Owner-only.
+ */
+router.post("/:id/hide", async (req: Request, res: Response): Promise<void> => {
+  try {
+    const clerkId = getClerkId(req);
+    const fileId = paramId(req);
+
+    const [file] = await db
+      .select({ id: filesTable.id })
+      .from(filesTable)
+      .where(and(eq(filesTable.id, fileId), eq(filesTable.ownerClerkId, clerkId)))
+      .limit(1);
+
+    if (!file) {
+      res.status(404).json({ error: "File not found." });
+      return;
+    }
+
+    await db
+      .insert(fileHiddenTable)
+      .values({ fileId, userId: clerkId })
+      .onConflictDoNothing({ target: [fileHiddenTable.fileId, fileHiddenTable.userId] });
+
+    res.json({ success: true });
+    return;
+  } catch (error) {
+    logger.error({ err: error }, "Failed to hide file");
+    res.status(500).json({ error: "Failed to update the file." });
+    return;
+  }
+});
+
+/**
+ * DELETE /api/files/:id/share/me
+ * Recipient "Delete for Me": revokes only the current user's access to a shared
+ * file. Deleting their share row immediately severs download and key access
+ * (every download/key call re-checks share membership). The owner's file and
+ * all other recipients are unaffected. A recipient can never delete for
+ * everyone - that path (DELETE /:id) is owner-scoped.
+ */
+router.delete("/:id/share/me", async (req: Request, res: Response): Promise<void> => {
+  try {
+    const clerkId = getClerkId(req);
+    const fileId = paramId(req);
+
+    const removed = await db.transaction(async (tx) => {
+      const deleted = await tx
+        .delete(fileSharesTable)
+        .where(and(eq(fileSharesTable.fileId, fileId), eq(fileSharesTable.sharedWithUserId, clerkId)))
+        .returning({ id: fileSharesTable.id });
+      if (!deleted.length) return false;
+      // Remove this user's own derived rows so the file fully disappears for
+      // them; the owner's and other recipients' rows are left alone.
+      await tx
+        .delete(fileSearchTokensTable)
+        .where(and(eq(fileSearchTokensTable.fileId, fileId), eq(fileSearchTokensTable.userId, clerkId)));
+      await tx
+        .delete(fileDisplayNamesTable)
+        .where(and(eq(fileDisplayNamesTable.fileId, fileId), eq(fileDisplayNamesTable.userId, clerkId)));
+      return true;
+    });
+
+    if (!removed) {
+      res.status(404).json({ error: "Shared file not found." });
+      return;
+    }
+
+    res.json({ success: true });
+    return;
+  } catch (error) {
+    logger.error({ err: error }, "Failed to remove shared file");
+    res.status(500).json({ error: "Failed to remove the shared file." });
     return;
   }
 });

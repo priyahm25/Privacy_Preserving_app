@@ -1,11 +1,17 @@
 import { useAuth } from "@clerk/expo";
+import { useCallback, useRef } from "react";
 
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || "http://localhost:3000";
 
 export function useAuthenticatedApi() {
   const { getToken, isLoaded, isSignedIn } = useAuth();
+  // @clerk/expo's useAuth returns a new getToken on every render. Depending on
+  // it directly made `request` (and every API object memoised on it) change
+  // each render, re-running consumers' effects in a loop.
+  const getTokenRef = useRef(getToken);
+  getTokenRef.current = getToken;
 
-  const request = async (
+  const request = useCallback(async (
     path: string,
     init: RequestInit = {},
   ): Promise<Response> => {
@@ -13,7 +19,7 @@ export function useAuthenticatedApi() {
       throw new Error("User is not signed in.");
     }
 
-    const token = await getToken();
+    const token = await getTokenRef.current();
     if (!token) {
       throw new Error("Clerk session token is unavailable.");
     }
@@ -35,7 +41,7 @@ export function useAuthenticatedApi() {
       ...init,
       headers,
     });
-  };
+  }, [isLoaded, isSignedIn]);
 
   return { request };
 }

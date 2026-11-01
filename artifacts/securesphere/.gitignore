@@ -31,6 +31,9 @@ yarn-error.*
 .DS_Store
 *.pem
 
+# Firebase client config (FCM push)
+google-services.json
+
 # local env files
 .env*.local
 

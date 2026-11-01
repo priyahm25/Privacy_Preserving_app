@@ -4,11 +4,14 @@ const templates: Record<NotificationType, (actor: string) => string> = {
   file_shared: (actor) => `${actor} shared a file with you.`,
   collaboration_invite: (actor) => `${actor} invited you to collaborate.`,
   collaboration_accepted: (actor) => `${actor} accepted your collaboration invitation.`,
+  // Never the message itself: chat content is end-to-end encrypted.
+  chat_message: (actor) => `${actor} sent you a new message.`,
 };
 const titles: Record<NotificationType, string> = {
   file_shared: "File Shared",
   collaboration_invite: "Collaboration Invite",
   collaboration_accepted: "Invitation Accepted",
+  chat_message: "New Message",
 };
 
 /** Construct only minimal, server-authored notification text and metadata. */
@@ -17,7 +20,7 @@ export function makeNotificationEvent(input: {
   actorUserId: string;
   actorName: string;
   type: NotificationType;
-  resourceType: "file" | "invitation";
+  resourceType: "file" | "invitation" | "conversation";
   resourceId: string;
 }) {
   if (!input.recipientUserId || !input.actorUserId || input.recipientUserId === input.actorUserId || !input.resourceId) return null;

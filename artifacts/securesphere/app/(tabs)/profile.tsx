@@ -1,6 +1,6 @@
 import { useClerk } from "@clerk/expo";
 
-import React from "react";
+import React, { useCallback, useState } from "react";
 import {
   View,
   Text,
@@ -10,7 +10,7 @@ import {
   Platform,
   Alert,
 } from "react-native";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -18,6 +18,10 @@ import { useColors } from "@/hooks/useColors";
 import { useApp } from "@/context/AppContext";
 import { UserAvatar } from "@/components/UserCard";
 import { SecurityScore } from "@/components/SecurityScore";
+import { useProfileApi, type ProfileSummary } from "@/lib/profileApi";
+import { calculateSecurityScore, formatStorageBytes, type SecurityCheck } from "@/lib/profileSecurity";
+import { useAuthenticatedApi } from "@/lib/authenticatedApi";
+import { unregisterPushToken } from "@/lib/pushNotifications";
 
 const MENU_ITEMS = [
   {
@@ -61,15 +65,49 @@ const MENU_ITEMS = [
 export default function Profile() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
-  const { currentUser } = useApp();
+  const { currentUser, isAuthenticated } = useApp();
+  const profileApi = useProfileApi();
+  const [summary, setSummary] = useState<ProfileSummary | null>(null);
+  const [deviceStatus, setDeviceStatus] = useState<"passed" | "failed" | "unknown">("unknown");
+  const [summaryError, setSummaryError] = useState(false);
+  const [loading, setLoading] = useState(true);
   const { signOut } = useClerk();
+  const { request } = useAuthenticatedApi();
   const topPad = Platform.OS === "web" ? 67 : insets.top;
-  const storagePercent = currentUser.storageUsed / currentUser.storageTotal;
+  useFocusEffect(useCallback(() => {
+    let active = true;
+    setLoading(true);
+    setSummaryError(false);
+    if (!isAuthenticated) {
+      setSummary(null);
+      setDeviceStatus("unknown");
+      setLoading(false);
+      return () => { active = false; };
+    }
+    void Promise.allSettled([profileApi.getSummary(), profileApi.checkDeviceKey(currentUser.id)]).then(([summaryResult, keyResult]) => {
+      if (!active) return;
+      if (summaryResult.status === "fulfilled") setSummary(summaryResult.value);
+      else { setSummary(null); setSummaryError(true); }
+      setDeviceStatus(keyResult.status === "fulfilled" ? keyResult.value : "unknown");
+      setLoading(false);
+    });
+    return () => { active = false; };
+  }, [isAuthenticated, currentUser.id]));
+
+  const calculated = calculateSecurityScore({
+    deviceKey: deviceStatus,
+    fileCount: summary ? summary.files.count : null,
+    encryptedFileCount: summary?.files.encryptedCount ?? null,
+    shareCount: summary?.shares.count ?? null,
+    wrappedShareCount: summary?.shares.wrappedKeyCount ?? null,
+  });
 
   const handleLogout = async () => {
     console.log("Logout started");
 
     try {
+      // Before signOut, while the session can still authenticate the request.
+      await unregisterPushToken(request);
       await signOut();
 
       console.log("Signed out successfully");
@@ -147,7 +185,8 @@ export default function Profile() {
               >
                 Security Score
               </Text>
-              <SecurityScore score={currentUser.securityScore} size={110} />
+                {calculated.score === null ? <Text style={[styles.unknownValue, { color: colors.mutedForeground }]}>—</Text> : <SecurityScore score={calculated.score} size={110} />}
+                <Text style={[styles.checkDetail, { color: colors.mutedForeground }]}>verified points out of 100</Text>
             </View>
             <View
               style={[
@@ -160,34 +199,23 @@ export default function Profile() {
               >
                 Storage Used
               </Text>
-              <Text style={[styles.storageValue, { color: colors.foreground }]}>
-                {currentUser.storageUsed} GB
-              </Text>
-              <Text
-                style={[styles.storageTotal, { color: colors.mutedForeground }]}
-              >
-                of {currentUser.storageTotal} GB
-              </Text>
-              <View
-                style={[styles.storageBar, { backgroundColor: colors.muted }]}
-              >
-                <View
-                  style={[
-                    styles.storageBarFill,
-                    {
-                      width: `${storagePercent * 100}%`,
-                      backgroundColor:
-                        storagePercent > 0.8 ? colors.warning : colors.primary,
-                    },
-                  ]}
-                />
-              </View>
-              <Text
-                style={[styles.storagePct, { color: colors.mutedForeground }]}
-              >
-                {Math.round(storagePercent * 100)}% used
-              </Text>
+              <Text style={[styles.storageValue, { color: colors.foreground }]}>{summary ? formatStorageBytes(summary.storageBytes) : "—"}</Text>
+              <Text style={[styles.storageTotal, { color: colors.mutedForeground }]}>{summary ? "bytes stored" : loading ? "Loading account data…" : "Unavailable"}</Text>
             </View>
+          </View>
+
+          <View style={[styles.securityBreakdown, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <Text style={[styles.breakdownTitle, { color: colors.foreground }]}>Security checks</Text>
+            {calculated.checks.map((check: SecurityCheck) => (
+              <View key={check.id} style={styles.checkRow}>
+                <View style={{ flex: 1 }}>
+                  <Text style={[styles.checkLabel, { color: colors.foreground }]}>{check.label}</Text>
+                  <Text style={[styles.checkDetail, { color: colors.mutedForeground }]}>{check.detail}</Text>
+                </View>
+                <Text style={[styles.checkStatus, { color: check.status === "passed" ? colors.primary : check.status === "failed" ? colors.destructive : colors.mutedForeground }]}>{check.status === "passed" ? `+${check.points}` : check.status === "not_applicable" ? "N/A" : `0/${check.points}`} · {check.status.replaceAll("_", " ")}</Text>
+              </View>
+            ))}
+            {summaryError && <Text style={[styles.checkDetail, { color: colors.warning }]}>Account security and storage metadata could not be loaded.</Text>}
           </View>
 
           {/* Menu */}
@@ -318,8 +346,13 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     marginTop: 4,
   },
-  storageBarFill: { height: "100%", borderRadius: 3 },
-  storagePct: { fontSize: 11, fontFamily: "Inter_400Regular" },
+  unknownValue: { fontSize: 36, fontFamily: "Inter_700Bold", lineHeight: 110 },
+  securityBreakdown: { borderRadius: 16, borderWidth: 1, padding: 16, gap: 12 },
+  breakdownTitle: { fontSize: 15, fontFamily: "Inter_600SemiBold" },
+  checkRow: { flexDirection: "row", alignItems: "center", gap: 8 },
+  checkLabel: { fontSize: 12, fontFamily: "Inter_500Medium" },
+  checkDetail: { fontSize: 11, fontFamily: "Inter_400Regular", marginTop: 2 },
+  checkStatus: { fontSize: 10, fontFamily: "Inter_600SemiBold", textTransform: "capitalize" },
   menuSection: { gap: 8 },
   menuItem: {
     flexDirection: "row",

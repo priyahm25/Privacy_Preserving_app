@@ -22,6 +22,7 @@ import * as Haptics from "expo-haptics";
 import * as DocumentPicker from "expo-document-picker";
 import * as Crypto from "expo-crypto";
 import { scanFile, ScanResult } from "@/lib/scanning/scanner";
+import { isUploadScanApproved } from "@/lib/scanning/uploadPolicy";
 import { encryptFileData, storeKeySecurely } from "@/lib/encryption";
 import { provisionDeviceKey } from "@/lib/deviceKeys";
 import { createDocumentSearchTokens, extractSearchableText, prepareDocumentSearchTerms } from "@/lib/searchIndex";
@@ -58,6 +59,7 @@ export default function Upload() {
   const [scanResult, setScanResult] = useState<{
     verdict: string;
     confidence: number;
+    reasonCode?: string;
   } | null>(null);
 
   const [errorMsg, setErrorMsg] = useState("");
@@ -111,6 +113,15 @@ export default function Upload() {
       }
 
       const file = result.assets[0];
+      if (__DEV__) {
+        const leafName = file.name.split(/[\\/]/).pop() || "";
+        const dot = leafName.lastIndexOf(".");
+        console.info("[SecureSphere scan] file-selected", {
+          extension: dot >= 0 ? leafName.slice(dot + 1).toLowerCase() : null,
+          reportedMimeType: file.mimeType || null,
+          fileSizeBytes: Number.isFinite(file.size) ? file.size : null,
+        });
+      }
       setSelectedFile({
         uri: file.uri,
         name: file.name,
@@ -138,17 +149,21 @@ export default function Upload() {
     );
 
     if (result.verdict === "ERROR") {
+      setScanResult({ verdict: result.verdict, confidence: result.confidence, reasonCode: result.reasonCode });
       setErrorMsg(result.error || "Failed to scan file");
       setState("error");
       return;
     }
 
-    setScanResult({ verdict: result.verdict, confidence: result.confidence });
+    setScanResult({ verdict: result.verdict, confidence: result.confidence, reasonCode: result.reasonCode });
+    setErrorMsg(result.error || "");
 
-    if (result.verdict === "MALICIOUS") {
+    if (!isUploadScanApproved(result.verdict)) {
       setState("blocked");
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      return; // Do NOT encrypt, do NOT upload
+      if (result.verdict === "MALICIOUS" || result.verdict === "UNCERTAIN" || result.verdict === "CORRUPTED") {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      }
+      return; // Unassessed, malformed, or flagged files are never uploaded.
     }
 
     setState("scan_complete");
@@ -163,6 +178,11 @@ export default function Upload() {
 
   const encryptAndUpload = async (completedScan: ScanResult) => {
     if (!selectedFile) return;
+    if (!isUploadScanApproved(completedScan.verdict)) {
+      setErrorMsg("Only files that completed the local scan can be uploaded.");
+      setState("error");
+      return;
+    }
 
     try {
       setState("encrypting");
@@ -260,14 +280,7 @@ export default function Upload() {
             selectedFile.mimeType || "application/octet-stream",
           );
           formData.append("iv", ivHex);
-          // Unsupported types have no local ML model. They remain uploadable
-          // and searchable where supported, but are explicitly recorded as a
-          // zero-confidence local scan rather than being mislabelled as a
-          // malicious verdict.
-          formData.append(
-            "malwareScanResult",
-            completedScan.verdict === "UNSUPPORTED" ? "SAFE" : completedScan.verdict,
-          );
+          formData.append("malwareScanResult", completedScan.verdict);
           formData.append(
             "malwareScanConfidence",
             completedScan.confidence.toString(),
@@ -485,8 +498,9 @@ export default function Upload() {
                     <Text
                       style={[styles.dropSubtitle, { color: colors.success }]}
                     >
-                      No malicious indicators detected. Confidence:{" "}
-                      {((1 - scanResult.confidence) * 100).toFixed(1)}%
+                      {scanResult.reasonCode?.endsWith("_RULES_CLEAN")
+                        ? "No malicious indicators found by the on-device rule checks."
+                        : `No malicious indicators detected. Model malicious score: ${(scanResult.confidence * 100).toFixed(1)}%`}
                     </Text>
                   )}
 
@@ -516,12 +530,12 @@ export default function Upload() {
                   <Ionicons name="warning" size={52} color={"#FF3B30"} />
                 </View>
                 <Text style={[styles.dropTitle, { color: "#FF3B30" }]}>
-                  ⚠ SECURITY THREAT DETECTED
+                  {scanResult?.verdict === "MALICIOUS" ? "POTENTIAL SECURITY THREAT" : scanResult?.verdict === "UNCERTAIN" ? "NEEDS FURTHER INSPECTION" : scanResult?.verdict === "CORRUPTED" ? "FILE COULD NOT BE VALIDATED" : "FILE TYPE NOT SUPPORTED"}
                 </Text>
                 <Text
                   style={[styles.dropSubtitle, { color: colors.foreground }]}
                 >
-                  This file appears to contain malicious content.
+                  {scanResult?.verdict === "MALICIOUS" ? errorMsg || "The on-device scan flagged this file as potentially malicious." : scanResult?.verdict === "UNCERTAIN" ? errorMsg || "The scan could not confirm this file is safe, so it was not uploaded." : scanResult?.verdict === "CORRUPTED" ? errorMsg || "The file failed supported format or integrity checks." : errorMsg || "Only TXT, DOCX, PDF and PPTX files can be scanned and uploaded."}
                 </Text>
                 <Text
                   style={[
@@ -529,7 +543,7 @@ export default function Upload() {
                     { color: colors.mutedForeground },
                   ]}
                 >
-                  Confidence: {(scanResult?.confidence! * 100).toFixed(1)}%
+                  {scanResult?.reasonCode ? `Reason: ${scanResult.reasonCode}${scanResult.confidence > 0 ? ` · model score ${(scanResult.confidence * 100).toFixed(1)}%` : ""}` : "No scan verdict was produced."}
                 </Text>
                 <Text
                   style={[
@@ -566,13 +580,16 @@ export default function Upload() {
                   <Ionicons name="close-circle" size={52} color={"#FF3B30"} />
                 </View>
                 <Text style={[styles.dropTitle, { color: "#FF3B30" }]}>
-                  Upload Failed
+                  {scanResult?.verdict === "ERROR" ? "Scan Failed" : "Upload Failed"}
                 </Text>
                 <Text
                   style={[styles.dropSubtitle, { color: colors.foreground }]}
                 >
                   {errorMsg}
                 </Text>
+                {scanResult?.verdict === "ERROR" && (
+                  <Text style={[styles.dropSubtitle, { color: colors.mutedForeground }]}>The file was not uploaded because its scan did not complete.</Text>
+                )}
                 <TouchableOpacity
                   onPress={reset}
                   style={[

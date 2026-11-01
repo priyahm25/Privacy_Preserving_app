@@ -17,6 +17,8 @@
       "supportsTablet": false
     },
     "android": {
+      "package": "com.priyahm25.securesphere",
+      "googleServicesFile": "./google-services.json",
       "backgroundColor": "#050B18"
     },
     "web": {
@@ -33,11 +35,24 @@
       "expo-font",
       "expo-web-browser",
       "@clerk/expo",
-      "expo-secure-store"
+      "expo-secure-store",
+      [
+        "expo-notifications",
+        {
+          "color": "#0066FF",
+          "defaultChannel": "default"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "d20339ec-b21d-410d-a5fb-ea5654b24d0e"
+      }
+    },
+    "owner": "priyahm25"
   }
 }

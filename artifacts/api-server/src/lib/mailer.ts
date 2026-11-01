@@ -1,5 +1,7 @@
 import nodemailer from "nodemailer";
 import { logger } from "./logger";
+import { deliverEmail, type SendResult } from "./emailDelivery";
+import { resolveSmtpConfig, smtpFailureHint } from "./smtpConfig";
 
 type Transporter = ReturnType<typeof nodemailer.createTransport>;
 
@@ -21,10 +23,7 @@ type Transporter = ReturnType<typeof nodemailer.createTransport>;
  * told so it can show "copy the link instead".
  */
 
-export interface SendResult {
-  sent: boolean;
-  error?: string;
-}
+export type { SendResult } from "./emailDelivery";
 
 export interface InvitationEmailInput {
   to: string;
@@ -37,33 +36,46 @@ export interface InvitationEmailInput {
 let cachedTransporter: Transporter | null = null;
 
 export function isMailConfigured(): boolean {
-  return Boolean(
-    process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS,
-  );
+  return resolveSmtpConfig(process.env).transport !== null;
 }
 
 function getTransporter(): Transporter | null {
-  if (!isMailConfigured()) {
-    return null;
-  }
   if (cachedTransporter) {
     return cachedTransporter;
   }
-
-  const port = Number(process.env.SMTP_PORT ?? 587);
-
-  cachedTransporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port,
-    // Implicit TLS on 465; STARTTLS upgrade on 587.
-    secure: process.env.SMTP_SECURE === "true" || port === 465,
-    auth: {
-      user: process.env.SMTP_USER as string,
-      pass: process.env.SMTP_PASS as string,
-    },
-  });
-
+  // Implicit TLS on 465; STARTTLS (required, never plaintext auth) on 587.
+  const { transport } = resolveSmtpConfig(process.env);
+  if (!transport) {
+    return null;
+  }
+  cachedTransporter = nodemailer.createTransport(transport);
   return cachedTransporter;
+}
+
+/**
+ * Startup check: logs which SMTP settings are in effect (never SMTP_PASS),
+ * any misconfiguration, and the result of a login test against the server.
+ * Never throws - the API runs without email, sharing links manually.
+ */
+export function logSmtpStartupStatus(): void {
+  const config = resolveSmtpConfig(process.env);
+  for (const error of config.errors) logger.error(`SMTP config: ${error}`);
+  for (const warning of config.warnings) logger.warn(`SMTP config: ${warning}`);
+  if (!config.transport) {
+    if (!config.errors.length) {
+      logger.warn("SMTP not configured (SMTP_HOST, SMTP_USER, SMTP_PASS); invitation emails are disabled, links are still returned.");
+    }
+    return;
+  }
+  const transporter = getTransporter();
+  void transporter?.verify().then(
+    () => logger.info(config.summary, "SMTP login verified; invitation emails enabled"),
+    (error: { code?: string; responseCode?: number }) =>
+      logger.error(
+        { ...config.summary, code: error?.code, responseCode: error?.responseCode, hint: smtpFailureHint(error?.code, error?.responseCode) },
+        "SMTP login failed; invitations will be created but emails will not be sent",
+      ),
+  );
 }
 
 function escapeHtml(value: string): string {
@@ -128,32 +140,27 @@ export async function sendInvitationEmail(
 ): Promise<SendResult> {
   const transporter = getTransporter();
 
-  if (!transporter) {
-    return {
-      sent: false,
-      error:
-        "Email delivery is not configured on the server (set SMTP_HOST, SMTP_USER and SMTP_PASS).",
-    };
-  }
+  const result = await deliverEmail(
+    transporter &&
+      (() =>
+        transporter.sendMail({
+          from: resolveSmtpConfig(process.env).from ?? undefined,
+          to: input.to,
+          subject: `${input.inviterName} invited you to SecureSphere`,
+          text: buildText(input),
+          html: buildHtml(input),
+        })),
+  );
 
-  try {
-    await transporter.sendMail({
-      from: process.env.MAIL_FROM || process.env.SMTP_USER,
-      to: input.to,
-      subject: `${input.inviterName} invited you to SecureSphere`,
-      text: buildText(input),
-      html: buildHtml(input),
-    });
-
-    return { sent: true };
-  } catch (error) {
-    logger.error({ err: error }, "Failed to send invitation email");
-    return {
-      sent: false,
-      error:
-        error instanceof Error
-          ? error.message
-          : "Unknown error while sending the invitation email.",
-    };
+  if (result.status === "not_configured") {
+    logger.warn("Invitation email skipped: SMTP_HOST, SMTP_USER or SMTP_PASS is not set");
+  } else if (result.status === "failed") {
+    // Codes only: the raw error carries the SMTP transcript, and the client
+    // gets a fixed message (EAUTH/535 = Gmail rejected SMTP_USER/SMTP_PASS).
+    logger.error(
+      { ...result.diagnostic, hint: smtpFailureHint(result.diagnostic?.code, result.diagnostic?.responseCode) },
+      "Failed to send invitation email",
+    );
   }
+  return result;
 }

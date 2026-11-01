@@ -25,6 +25,12 @@ export interface SecureFileRecord {
   permission?: "viewer" | "editor";
   sharedAt?: string;
   sharedBy?: Pick<ShareRecipient, "clerkId" | "name" | "email">;
+  /** Owned files only: true when the owner hid it from their Shared-by-Me list. */
+  hiddenFromShared?: boolean;
+  /** Shared-with-me files only: the owner's real filename when a personal rename is set. */
+  originalName?: string;
+  /** Shared-with-me files only: true when the current user set a personal name. */
+  hasCustomName?: boolean;
 }
 
 export interface TeammateSummary {
@@ -87,8 +93,10 @@ export function useFilesApi() {
     if (!response.ok) return [];
     return (await response.json()).teammates ?? [];
   };
-  const getMyDeviceKey = async (): Promise<DevicePublicKey> => {
-    const response = await request("/api/keys/me");
+  const getMyDeviceKey = async (publicKey?: JsonWebKey): Promise<DevicePublicKey> => {
+    const response = publicKey
+      ? await request("/api/keys/register", { method: "POST", body: JSON.stringify({ publicKey }) })
+      : await request("/api/keys/me");
     if (!response.ok) throw new Error("Your active device key is unavailable.");
     return await response.json();
   };
@@ -126,6 +134,31 @@ export function useFilesApi() {
     const data = await response.json();
     return { files: data.files ?? [], nextPage: typeof data.nextPage === "number" ? data.nextPage : null };
   };
+  const parseError = async (response: Response, fallback: string): Promise<string> => {
+    const body = await response.json().catch(() => ({}));
+    return body?.error || fallback;
+  };
+  // Owner renames the file (extension preserved server-side). Owner-only.
+  const renameFile = async (id: string, filename: string): Promise<void> => {
+    const response = await request(`/api/files/${id}`, { method: "PATCH", body: JSON.stringify({ filename }) });
+    if (!response.ok) throw new Error(await parseError(response, "Could not rename the file."));
+  };
+  // Recipient sets their personal display name for a shared file.
+  const setDisplayName = async (id: string, name: string): Promise<void> => {
+    const response = await request(`/api/files/${id}/display-name`, { method: "PATCH", body: JSON.stringify({ name }) });
+    if (!response.ok) throw new Error(await parseError(response, "Could not rename the file."));
+  };
+  // Owner "Delete for Me": hide from own Shared-by-Me list; keeps file + shares.
+  const hideFromShared = async (id: string): Promise<void> => {
+    const response = await request(`/api/files/${id}/hide`, { method: "POST" });
+    if (!response.ok) throw new Error(await parseError(response, "Could not update the file."));
+  };
+  // Recipient "Delete for Me": revoke only the current user's access.
+  const removeSharedWithMe = async (id: string): Promise<void> => {
+    const response = await request(`/api/files/${id}/share/me`, { method: "DELETE" });
+    if (!response.ok) throw new Error(await parseError(response, "Could not remove the shared file."));
+  };
+  // Owner "Delete for Everyone": delete the file and revoke all shares.
   const deleteFile = async (id: string): Promise<boolean> => (await request(`/api/files/${id}`, { method: "DELETE" })).ok;
-  return { listFiles, getFile, listTeammates, getMyDeviceKey, getTeammateDeviceKey, createSecureShare, getKeyShare, downloadCiphertext, searchFiles, deleteFile };
+  return { listFiles, getFile, listTeammates, getMyDeviceKey, getTeammateDeviceKey, createSecureShare, getKeyShare, downloadCiphertext, searchFiles, renameFile, setDisplayName, hideFromShared, removeSharedWithMe, deleteFile };
 }

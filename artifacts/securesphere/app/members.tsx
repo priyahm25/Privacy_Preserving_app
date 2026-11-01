@@ -52,6 +52,7 @@ export default function Members() {
   const [teammates, setTeammates] = useState<Teammate[]>([]);
   const [invitations, setInvitations] = useState<InvitationData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const topPad = Platform.OS === "web" ? 67 : insets.top;
   const botPad = Platform.OS === "web" ? 34 : insets.bottom;
 
@@ -71,11 +72,6 @@ export default function Members() {
           Authorization: `Bearer ${token}`,
         },
       });
-      if (tmResponse.ok) {
-        const tmData = await tmResponse.json();
-        setTeammates(tmData.teammates || []);
-      }
-
       const invResponse = await fetch(
         `${API_BASE_URL}/api/teammates/invitations/pending`,
         {
@@ -84,12 +80,30 @@ export default function Members() {
           },
         },
       );
+
+      // Report failures instead of showing an empty list that looks like
+      // "no teammates".
+      const errors: string[] = [];
+      if (tmResponse.ok) {
+        const tmData = await tmResponse.json();
+        setTeammates(tmData.teammates || []);
+      } else {
+        const body = await tmResponse.json().catch(() => ({}));
+        errors.push(body?.error || `Could not load teammates (${tmResponse.status}).`);
+      }
       if (invResponse.ok) {
         const invData = await invResponse.json();
         setInvitations(invData.invitations || []);
+      } else {
+        const body = await invResponse.json().catch(() => ({}));
+        errors.push(body?.error || `Could not load invitations (${invResponse.status}).`);
       }
+      setLoadError(errors.length ? errors.join("\n") : null);
     } catch (err) {
       console.error("Error fetching teammates:", err);
+      setLoadError(
+        err instanceof Error ? err.message : "Could not reach the server.",
+      );
     } finally {
       setLoading(false);
     }
@@ -150,6 +164,36 @@ export default function Members() {
     } catch (err) {
       console.error("Error accepting invitation:", err);
       Alert.alert("Error", "Failed to accept invitation");
+    }
+  };
+
+  const handleDeclineInvitation = async (invitationToken: string) => {
+    try {
+      const token = await getToken();
+      if (!token) {
+        Alert.alert("Error", "Clerk session token is unavailable.");
+        return;
+      }
+
+      const response = await fetch(`${API_BASE_URL}/api/teammates/reject`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ token: invitationToken }),
+      });
+
+      if (response.ok) {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+        fetchData();
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        Alert.alert("Error", errorData?.error || "Failed to decline invitation");
+      }
+    } catch (err) {
+      console.error("Error declining invitation:", err);
+      Alert.alert("Error", "Failed to decline invitation");
     }
   };
 
@@ -239,6 +283,13 @@ export default function Members() {
         ]}
       >
         <Ionicons name="checkmark" size={16} color={colors.success} />
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        onPress={() => handleDeclineInvitation(item.token)}
+        style={[styles.actionIconBtn, { borderColor: colors.border }]}
+      >
+        <Ionicons name="close" size={16} color={colors.destructive} />
       </TouchableOpacity>
     </View>
   );
@@ -396,6 +447,14 @@ export default function Members() {
           </TouchableOpacity>
         ))}
       </View>
+
+      {loadError && !loading && (
+        <TouchableOpacity onPress={fetchData} style={styles.errorBanner}>
+          <Text style={[styles.errorText, { color: colors.destructive }]}>
+            {loadError} Tap to retry.
+          </Text>
+        </TouchableOpacity>
+      )}
 
       {loading ? (
         <View style={styles.loadingContainer}>
@@ -569,6 +628,8 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   inviteButtonText: { fontSize: 14, fontFamily: "Inter_600SemiBold" },
+  errorBanner: { marginHorizontal: 20, marginBottom: 12 },
+  errorText: { fontSize: 13, fontFamily: "Inter_400Regular" },
   loadingContainer: {
     flex: 1,
     alignItems: "center",

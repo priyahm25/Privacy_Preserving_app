@@ -51,7 +51,7 @@ export const teammatesTable = pgTable(
 /**
  * Invitations table - tracks pending and accepted invitations
  * token: secure random string sent in invitation link
- * status: pending, accepted, expired, revoked
+ * status: pending, accepted, expired, revoked, declined
  * expiresAt: invitation expires after 7 days (check on accept)
  */
 export const invitationsTable = pgTable(
@@ -69,7 +69,7 @@ export const invitationsTable = pgTable(
 
     status: text("status")
       .notNull()
-      .$type<"pending" | "accepted" | "expired" | "revoked">()
+      .$type<"pending" | "accepted" | "expired" | "revoked" | "declined">()
       .default("pending"),
 
     expiresAt: timestamp("expires_at").notNull(),

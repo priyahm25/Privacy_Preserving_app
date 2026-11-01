@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useRef, useState, ReactNode } from 'react';
+import { AppState } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useAuth, useClerk, useUser } from '@clerk/expo';
 import { CURRENT_USER, User } from '@/data/mockData';
@@ -21,6 +22,8 @@ interface AppContextType {
   completeOnboarding: () => Promise<void>;
   toggleDarkMode: () => void;
   decrementNotifications: () => void;
+  /** Re-read the unread count now, e.g. after marking notifications read. */
+  refreshNotificationCount: () => void;
 }
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -33,7 +36,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);
   const [isAppLoading, setIsAppLoading] = useState(true);
   const [darkMode, setDarkMode] = useState(true);
-  const [notificationCount, setNotificationCount] = useState(2);
+  const [notificationCount, setNotificationCount] = useState(0);
   const [isProfileSynced, setIsProfileSynced] = useState(false);
 
   useEffect(() => {
@@ -125,15 +128,26 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   // Keep the header badge current while signed in. The API scopes this count
   // to the verified Clerk subject, and cleanup prevents cross-account polling.
+  // Polling pauses while the app is backgrounded (push covers that case) and
+  // catches up as soon as it returns to the foreground.
+  const refreshCountRef = useRef<() => void>(() => undefined);
+  // getToken is a new function on every render; reading it through a ref keeps
+  // this effect (and its fetch + interval) from restarting on each render.
+  const getTokenRef = useRef(getToken);
+  getTokenRef.current = getToken;
   useEffect(() => {
     if (!isLoaded || !isSignedIn) {
       setNotificationCount(0);
+      refreshCountRef.current = () => undefined;
       return;
     }
     let cancelled = false;
+    let inFlight = false;
     const refreshCount = async () => {
+      if (inFlight) return;
+      inFlight = true;
       try {
-        const token = await getToken();
+        const token = await getTokenRef.current();
         if (!token || cancelled) return;
         const response = await fetch(`${API_BASE_URL}/api/notifications/unread-count`, {
           headers: { Authorization: `Bearer ${token}` },
@@ -143,12 +157,26 @@ export function AppProvider({ children }: { children: ReactNode }) {
         if (!cancelled) setNotificationCount(Number(data.count) || 0);
       } catch {
         // Keep the last known count during transient connectivity failures.
+      } finally {
+        inFlight = false;
       }
     };
-    void refreshCount();
-    const timer = setInterval(() => void refreshCount(), 30_000);
-    return () => { cancelled = true; clearInterval(timer); };
-  }, [isLoaded, isSignedIn, user?.id, getToken]);
+    refreshCountRef.current = () => void refreshCount();
+    let timer: ReturnType<typeof setInterval> | null = null;
+    const start = () => {
+      if (timer) return;
+      void refreshCount();
+      timer = setInterval(() => void refreshCount(), 30_000);
+    };
+    const stop = () => {
+      if (timer) clearInterval(timer);
+      timer = null;
+    };
+    if (AppState.currentState !== 'background') start();
+    const subscription = AppState.addEventListener('change', (state) => (state === 'active' ? start() : state === 'background' ? stop() : undefined));
+    return () => { cancelled = true; stop(); subscription.remove(); };
+  }, [isLoaded, isSignedIn, user?.id]);
+  const refreshNotificationCount = useCallback(() => refreshCountRef.current(), []);
 
   const currentUser: User = {
     ...CURRENT_USER,
@@ -201,6 +229,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         completeOnboarding,
         toggleDarkMode,
         decrementNotifications,
+        refreshNotificationCount,
       }}
     >
       {children}

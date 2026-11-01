@@ -17,7 +17,6 @@ import { useUser } from "@clerk/expo";
 import { createQuerySearchTokens } from "@/lib/searchIndex";
 import { formatBytes, SecureFileRecord, useFilesApi } from "@/lib/filesApi";
 
-const SEARCH_MODES = ["AND", "OR"] as const;
 
 type SearchDisplayFile = {
   id: string;
@@ -53,7 +52,6 @@ export default function Search() {
   const { user } = useUser();
   const { searchFiles, listFiles } = useFilesApi();
   const [query, setQuery] = useState("");
-  const [searchMode, setSearchMode] = useState<"AND" | "OR">("AND");
   const [results, setResults] = useState<SearchDisplayFile[]>([]);
   const [uploadedFiles, setUploadedFiles] = useState<SearchDisplayFile[]>([]);
   const [searchError, setSearchError] = useState<string | null>(null);
@@ -103,7 +101,8 @@ export default function Search() {
       void (async () => {
         try {
           const tokens = await createQuerySearchTokens(user.id, query);
-          const response = await searchFilesRef.current(tokens, searchMode);
+          // Blind-index match requires all query tokens to match (unchanged default).
+          const response = await searchFilesRef.current(tokens, "AND");
           console.info("Secure search", {
             queryTokenCount: tokens.length,
             matchedFileCount: response.files.length,
@@ -126,7 +125,7 @@ export default function Search() {
       })();
     }, 250);
     return () => { cancelled = true; clearTimeout(timer); };
-  }, [query, searchMode, user?.id]);
+  }, [query, user?.id]);
 
   const loadMore = async () => {
     if (nextPage === null || loadingMore || !user?.id) return;
@@ -134,7 +133,7 @@ export default function Search() {
     setLoadingMore(true);
     try {
       const tokens = await createQuerySearchTokens(user.id, query);
-      const response = await searchFilesRef.current(tokens, searchMode, nextPage);
+      const response = await searchFilesRef.current(tokens, "AND", nextPage);
       console.info("Secure search", {
         queryTokenCount: tokens.length,
         matchedFileCount: response.files.length,
@@ -215,50 +214,6 @@ export default function Search() {
           </TouchableOpacity>
         )}
       </View>
-
-      <FlatList
-        data={SEARCH_MODES}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        keyExtractor={(item) => item}
-        contentContainerStyle={{
-          paddingHorizontal: 20,
-          gap: 8,
-          marginBottom: 16,
-        }}
-        style={{ flexGrow: 0 }}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            onPress={() => setSearchMode(item)}
-            style={[
-              styles.filterChip,
-            searchMode === item
-                ? {
-                    backgroundColor: colors.primary,
-                    borderColor: colors.primary,
-                  }
-                : {
-                    backgroundColor: colors.card,
-                    borderColor: colors.border,
-                  },
-            ]}
-          >
-            <Text
-              style={[
-                styles.filterText,
-                {
-                  color:
-                    searchMode === item
-                      ? colors.primaryForeground
-                      : colors.mutedForeground,
-                },
-              ]}
-            >
-              {item}
-            </Text>
-          </TouchableOpacity>
-        )}
-      />
 
       <FlatList<SearchDisplayFile>
         data={query.length > 0 ? results : uploadedFiles}
@@ -391,18 +346,6 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
     fontFamily: "Inter_400Regular",
-  },
-
-  filterChip: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-    borderWidth: 1,
-  },
-
-  filterText: {
-    fontSize: 13,
-    fontFamily: "Inter_500Medium",
   },
 
   sectionLabel: {

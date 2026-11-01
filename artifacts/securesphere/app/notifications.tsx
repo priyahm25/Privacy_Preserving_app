@@ -6,12 +6,15 @@ import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useColors } from '@/hooks/useColors';
 import { AppNotification, useNotificationsApi } from '@/lib/notificationsApi';
+import { routeForNotification } from '@/lib/notificationRoutes';
+import { useApp } from '@/context/AppContext';
 
 function getNotificationIcon(type: AppNotification['type']): { icon: string; color: string } {
   switch (type) {
     case 'file_shared': return { icon: 'share-social', color: '#0066FF' };
     case 'collaboration_invite': return { icon: 'person-add', color: '#00D4FF' };
     case 'collaboration_accepted': return { icon: 'checkmark-circle', color: '#00E676' };
+    case 'chat_message': return { icon: 'chatbubble-ellipses', color: '#B44FFF' };
     default: return { icon: 'notifications', color: '#FF8C00' };
   }
 }
@@ -29,6 +32,7 @@ export default function Notifications() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
   const api = useNotificationsApi();
+  const { refreshNotificationCount } = useApp();
   const apiRef = useRef(api);
   apiRef.current = api;
   const [notifications, setNotifications] = useState<AppNotification[]>([]);
@@ -48,14 +52,13 @@ export default function Notifications() {
     return () => clearInterval(timer);
   }, [refresh]));
   const markAllRead = async () => {
-    try { await apiRef.current.markAllRead(); await refresh(); }
+    try { await apiRef.current.markAllRead(); await refresh(); refreshNotificationCount(); }
     catch (e) { setError(e instanceof Error ? e.message : 'Could not update notifications.'); }
   };
   const markRead = async (item: AppNotification) => {
     try {
-      if (!item.readAt) { await apiRef.current.markRead(item.id); await refresh(); }
-      if (item.resourceType === 'file' && item.resourceId) router.push(`/file-details/${item.resourceId}`);
-      else if (item.resourceType === 'invitation') router.push('/members');
+      if (!item.readAt) { await apiRef.current.markRead(item.id); await refresh(); refreshNotificationCount(); }
+      if (item.resourceType) router.push(routeForNotification(item));
     } catch (e) { setError(e instanceof Error ? e.message : 'Could not update notification.'); }
   };
 

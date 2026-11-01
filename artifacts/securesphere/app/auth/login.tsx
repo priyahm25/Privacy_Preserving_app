@@ -52,18 +52,14 @@ export default function Login() {
     try {
       await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
-      console.log('Initiating sign-in for:', email.trim());
-
-      // Attempt password sign-in
+      // Step 1: verify the password. Result objects can carry session data, so
+      // they are not logged.
       const result = await signIn.password({
         identifier: email.trim(),
         password,
       });
 
-      console.log('SignIn Password result:', result);
-
       if (result?.error) {
-        console.warn('SignIn Password error:', result.error);
         const parsed = formatClerkError(result.error, 'Sign In Failed');
         setErrorMessage(parsed.message);
 
@@ -79,33 +75,41 @@ export default function Login() {
         return;
       }
 
-      // Finalize the sign-in attempt
+      // Step 2: when the account has two-step verification enabled, Clerk
+      // returns `needs_second_factor`. Hand off to the verification screen
+      // WITHOUT finalizing - no session exists until the second factor passes,
+      // so this step cannot be skipped.
+      if (signIn.status === 'needs_second_factor') {
+        router.push('/auth/two-factor' as any);
+        return;
+      }
+
+      // A forced password reset is routed to the existing recovery flow.
+      if (signIn.status === 'needs_new_password') {
+        setErrorMessage('Your password needs to be reset before you can sign in. Use “Forgot password?” to continue.');
+        return;
+      }
+
+      if (signIn.status !== 'complete') {
+        setErrorMessage('Additional verification is required to sign in. Please try again.');
+        return;
+      }
+
+      // No second factor required: finalize and start the session.
       const finalized = await signIn.finalize();
-      console.log('SignIn Finalize result:', finalized);
 
       if (finalized?.error) {
-        console.warn('SignIn Finalize error:', finalized.error);
         const parsed = formatClerkError(finalized.error, 'Sign In Failed');
         setErrorMessage(parsed.message);
         return;
       }
 
-      // Set active session in Clerk
       if (signIn.createdSessionId) {
-        await setActive({
-          session: signIn.createdSessionId,
-        });
-
-        // Resumes a pending invitation if the user got here from an email link.
-        router.replace((await resolvePostAuthRoute()) as any);
-      } else {
-        // Fallback for multi-factor or secondary requirement
-        if (signIn.status === 'needs_first_factor' || signIn.status === 'needs_second_factor') {
-          Alert.alert('Verification Required', 'Additional authentication is required for this account.');
-        } else {
-          router.replace((await resolvePostAuthRoute()) as any);
-        }
+        await setActive({ session: signIn.createdSessionId });
       }
+
+      // Resumes a pending invitation if the user got here from an email link.
+      router.replace((await resolvePostAuthRoute()) as any);
     } catch (err: any) {
       console.error('LOGIN UNHANDLED ERROR:', err);
       const parsed = formatClerkError(err, 'Sign In Failed');

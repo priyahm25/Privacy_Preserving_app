@@ -2,3 +2,4 @@
 export * from "./teammates";
 export * from "./files";
 export * from "./notifications";
+export * from "./chat";

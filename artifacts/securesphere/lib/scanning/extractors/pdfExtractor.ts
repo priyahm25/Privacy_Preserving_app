@@ -7,6 +7,8 @@
  * IMPORTANT: Never transmit these bytes or this result to any server.
  */
 
+import { analyzePdf, bytesToLatin1, pymupdfMetadataSize, type PdfAnalysis } from "../pdfStructure";
+
 export interface PDFFeatures {
   file_size: number;
   metadata_size: number;
@@ -54,41 +56,21 @@ function countOccurrences(text: string, pattern: string): number {
  */
 export function extractPDFFeatures(
   fileBytes: Uint8Array,
-  fileSize: number
+  fileSize: number,
+  analysis: PdfAnalysis = analyzePdf(fileBytes),
 ): PDFFeatures {
-  // Decode bytes as latin-1 equivalent (use 0-255 char codes directly)
-  // JavaScript strings are UTF-16; we decode byte-by-byte for ASCII/latin compatibility
-  let rawText = '';
-  // Process in chunks to avoid stack overflow on large files
-  const CHUNK = 65536;
-  for (let i = 0; i < fileBytes.length; i += CHUNK) {
-    const chunk = fileBytes.subarray(i, i + CHUNK);
-    rawText += String.fromCharCode(...chunk);
-  }
+  // Keyword counts below use the raw bytes, exactly as the training extractor
+  // (raw_text.count on latin-1 bytes) did.
+  const rawText = bytesToLatin1(fileBytes);
   const rawTextLower = rawText.toLowerCase();
 
-  // === Basic metadata ===
-  // Detect encryption: /Encrypt keyword in PDF dictionary
-  const encrypted = rawText.includes('/Encrypt') ? 1 : 0;
-
-  // Page count: count /Type /Page entries (each page dictionary)
-  // More accurate: count '/Page ' or '/Page\n' patterns
-  const pageCount = countOccurrences(rawText, '/Type /Page');
-
-  // Title: extract from /Title metadata
-  let titleChars = 0;
-  const titleMatch = rawText.match(/\/Title\s*\(([^)]*?)\)/);
-  if (titleMatch) {
-    titleChars = titleMatch[1].length;
-  }
-
-  // Approximate metadata size: length of Info dictionary
-  let metadataSize = 0;
-  const infoMatch = rawText.match(/\/Info\s+\d+\s+\d+\s+R/);
-  if (infoMatch) {
-    // Estimate metadata size as the Info block around the match
-    metadataSize = Math.min(512, infoMatch[0].length * 4);
-  }
+  // === Parsed features ===
+  // Training took these from PyMuPDF (parsed document), so they come from the
+  // structure analysis, which also sees dictionaries inside object streams.
+  const encrypted = analysis.encrypted ? 1 : 0;
+  const pageCount = analysis.pageCount;
+  const titleChars = analysis.info.title.length;
+  const metadataSize = pymupdfMetadataSize(analysis.version, analysis.info, analysis.encrypted);
 
   // === Raw keyword counts (matching Python implementation) ===
   const object_count = countOccurrences(rawText, ' obj');
@@ -110,8 +92,8 @@ export function extractPDFFeatures(
   const embedded_file_count = countOccurrences(rawText, '/EmbeddedFile');
   const colors_count = countOccurrences(rawText, '/ColorSpace');
 
-  // Image count: /XObject entries of /Subtype /Image
-  const image_count = countOccurrences(rawText, '/Subtype /Image');
+  // Image XObjects (training: images listed per page by PyMuPDF).
+  const image_count = analysis.imageCount;
 
   return {
     file_size: fileSize,

@@ -6,7 +6,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useUser } from "@clerk/expo";
 import { useColors } from "@/hooks/useColors";
 import { retrieveKeySecurely } from "@/lib/encryption";
-import { wrapFileKey } from "@/lib/deviceKeys";
+import { ensureDeviceKey, wrapFileKey } from "@/lib/deviceKeys";
 import { formatBytes, SecureFileRecord, TeammateSummary, useFilesApi } from "@/lib/filesApi";
 
 type Progress = "idle" | "preparing" | "fetching" | "wrapping" | "creating" | "done" | "error";
@@ -45,7 +45,8 @@ export default function ShareFile() {
       const fileKey = await retrieveKeySecurely(fileId);
       if (!fileKey) throw new Error("This file’s local encryption key is unavailable on this device. It cannot be shared from here.");
       setProgress("fetching");
-      const [ownerKey, recipientKey] = await Promise.all([api.getMyDeviceKey(), api.getTeammateDeviceKey(teammateId)]);
+      const localDevice = await ensureDeviceKey(user.id);
+      const [ownerKey, recipientKey] = await Promise.all([api.getMyDeviceKey(localDevice.publicKey), api.getTeammateDeviceKey(teammateId)]);
       setProgress("wrapping");
       const wrapped = await wrapFileKey(user.id, recipientKey.publicKey as JsonWebKey, fileId, fileKey);
       setProgress("creating");

@@ -1,6 +1,7 @@
 /**
  * Main on-device file scanner.
- * Orchestrates: file type detection → feature extraction → LightGBM inference.
+ * Orchestrates: file type detection → local structure checks and
+ * deterministic rules → LightGBM inference where a model exists.
  *
  * The plaintext file bytes are NEVER transmitted anywhere.
  * Only scan results (metadata) are returned to the caller.
@@ -8,86 +9,49 @@
 
 import { Platform } from "react-native";
 import * as FileSystem from "expo-file-system/legacy";
-import { lgbmPredict, buildFeatureVector, LGBMModel } from "./lgbmInference";
-import { extractPDFFeatures } from "./extractors/pdfExtractor";
-import { extractHTMLFeatures } from "./extractors/htmlExtractor";
-import { extractWordFeatures } from "./extractors/wordExtractor";
-import { extractExcelFeatures } from "./extractors/excelExtractor";
+import type { LGBMModel } from "./lgbmInference";
+import { detectFileType, getUnsupportedFileReason, type SupportedFileType } from "./fileTypeDetection";
+import { scanFileBytes } from "./scanCore";
+import type { ScanVerdict } from "./verdict";
 
-export type SupportedFileType =
-  "pdf" | "word" | "excel" | "html" | "unsupported";
+export type { SupportedFileType } from "./fileTypeDetection";
 
 export interface ScanResult {
   fileType: SupportedFileType;
-  verdict: "SAFE" | "MALICIOUS" | "UNSUPPORTED" | "ERROR";
+  verdict: ScanVerdict;
   confidence: number;
+  reasonCode?: string;
+  findings?: string[];
   error?: string;
 }
 
-// Model cache — loaded once per session
-const modelCache: Partial<Record<SupportedFileType, LGBMModel>> = {};
+// Model cache — loaded once per session. Models are bundled JSON assets, so
+// scanning works offline.
+const modelCache: Partial<Record<"pdf" | "word", LGBMModel>> = {};
 
-async function loadModel(
-  fileType: Exclude<SupportedFileType, "unsupported">,
-): Promise<LGBMModel> {
-  if (modelCache[fileType]) return modelCache[fileType]!;
-
-  // Models are bundled in assets/models/
-  // In Expo managed workflow, use require() for JSON assets
-  let model: LGBMModel;
-  switch (fileType) {
-    case "pdf":
-      model = require("../../assets/models/pdf.json") as LGBMModel;
-      break;
-    case "word":
-      model = require("../../assets/models/word.json") as LGBMModel;
-      break;
-    case "excel":
-      model = require("../../assets/models/excel.json") as LGBMModel;
-      break;
-    case "html":
-      model = require("../../assets/models/html.json") as LGBMModel;
-      break;
-    default:
-      throw new Error(`No model for file type: ${fileType}`);
+function loadModel(fileType: "pdf" | "word"): LGBMModel {
+  if (!modelCache[fileType]) {
+    modelCache[fileType] = fileType === "pdf"
+      ? require("../../assets/models/pdf.json") as LGBMModel
+      : require("../../assets/models/word.json") as LGBMModel;
   }
-
-  modelCache[fileType] = model;
-  return model;
+  return modelCache[fileType]!;
 }
 
-/**
- * Detect file type from name and MIME type.
- */
-export function detectFileType(
-  fileName: string,
-  mimeType?: string,
-): SupportedFileType {
-  const name = fileName.toLowerCase();
-  const mime = (mimeType || "").toLowerCase();
+export { detectFileType } from "./fileTypeDetection";
 
-  if (name.endsWith(".pdf") || mime === "application/pdf") return "pdf";
-  if (
-    name.endsWith(".docx") ||
-    name.endsWith(".doc") ||
-    mime ===
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
-    mime === "application/msword"
-  )
-    return "word";
-  if (
-    name.endsWith(".xlsx") ||
-    name.endsWith(".xlsm") ||
-    name.endsWith(".xls") ||
-    mime ===
-      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
-    mime === "application/vnd.ms-excel"
-  )
-    return "excel";
-  if (name.endsWith(".html") || name.endsWith(".htm") || mime === "text/html")
-    return "html";
+let nextDiagnosticScanId = 1;
 
-  return "unsupported";
+function logDevelopmentScan(event: string, details: Record<string, string | number | boolean | null>): void {
+  if (__DEV__) {
+    console.info("[SecureSphere scan]", event, details);
+  }
+}
+
+function fileExtension(fileName: string): string {
+  const leafName = fileName.split(/[\\/]/).pop() || "";
+  const dot = leafName.lastIndexOf(".");
+  return dot >= 0 ? leafName.slice(dot + 1).toLowerCase() : "";
 }
 
 /**
@@ -125,7 +89,7 @@ export async function readFileBytes(uri: string): Promise<Uint8Array> {
 }
 
 /**
- * Scan a file for malware using on-device LightGBM inference.
+ * Scan a file for malware on the device.
  * @param fileUri - Local file:// URI from DocumentPicker
  * @param fileName - Original filename (for type detection)
  * @param fileSize - File size in bytes
@@ -138,74 +102,50 @@ export async function scanFile(
   fileSize: number,
   mimeType?: string,
 ): Promise<ScanResult> {
+  const scanId = nextDiagnosticScanId++;
   const fileType = detectFileType(fileName, mimeType);
+  logDevelopmentScan("type-detected", {
+    scanId,
+    extension: fileExtension(fileName) || null,
+    reportedMimeType: mimeType || null,
+    fileSizeBytes: Number.isFinite(fileSize) ? fileSize : null,
+    detectedType: fileType,
+  });
 
-  if (fileType === "unsupported") {
-    return {
-      fileType: "unsupported",
-      verdict: "UNSUPPORTED",
-      confidence: 0,
-    };
+  const unsupportedReason = getUnsupportedFileReason(fileName, mimeType, fileType);
+  if (unsupportedReason || fileType === "unsupported") {
+    const result: ScanResult = { fileType, verdict: "UNSUPPORTED", confidence: 0, reasonCode: unsupportedReason ?? "UNSUPPORTED_FILE_TYPE" };
+    logDevelopmentScan("scan-result", { scanId, verdict: result.verdict, reasonCode: result.reasonCode ?? null });
+    return result;
   }
 
+  let fileBytes: Uint8Array | null = null;
   try {
     // Read file bytes (plaintext stays on device)
-    const fileBytes = await readFileBytes(fileUri);
-
-    // Load the corresponding model
-    const model = await loadModel(fileType);
-
-    // Extract features
-    let featuresMap: Record<string, number>;
-    switch (fileType) {
-      case "pdf":
-        featuresMap = extractPDFFeatures(
-          fileBytes,
-          fileSize,
-        ) as unknown as Record<string, number>;
-        break;
-      case "word":
-        featuresMap = extractWordFeatures(
-          fileBytes,
-          fileSize,
-        ) as unknown as Record<string, number>;
-        break;
-      case "excel":
-        featuresMap = extractExcelFeatures(
-          fileBytes,
-          fileSize,
-        ) as unknown as Record<string, number>;
-        break;
-      case "html":
-        featuresMap = extractHTMLFeatures(
-          fileBytes,
-          fileSize,
-        ) as unknown as Record<string, number>;
-        break;
-      default:
-        throw new Error("Unreachable");
-    }
-
-    // Build feature vector in exact model order
-    const featureVector = buildFeatureVector(model, featuresMap);
-
-    // Run on-device inference
-    const maliciousProbability = lgbmPredict(model, featureVector);
-    const confidence = maliciousProbability;
-    const verdict: "SAFE" | "MALICIOUS" =
-      maliciousProbability >= 0.5 ? "MALICIOUS" : "SAFE";
-
-    // Explicitly clear file bytes from memory (help GC)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (fileBytes as any).fill(0);
-
-    return { fileType, verdict, confidence };
+    fileBytes = await readFileBytes(fileUri);
+    const core = await scanFileBytes(fileBytes, fileType, loadModel);
+    const result: ScanResult = { fileType, ...core };
+    // Findings are rule codes only - never document content.
+    logDevelopmentScan("scan-result", {
+      scanId,
+      verdict: result.verdict,
+      confidence: result.confidence,
+      reasonCode: result.reasonCode ?? null,
+      findings: result.findings?.join(",") || null,
+    });
+    return result;
   } catch (error) {
-    return {
+    const result: ScanResult = {
       fileType,
       verdict: "ERROR",
       confidence: 0,
+      reasonCode: "SCAN_ERROR",
       error: error instanceof Error ? error.message : String(error),
     };
+    logDevelopmentScan("scan-result", { scanId, verdict: result.verdict, reasonCode: result.reasonCode ?? null });
+    return result;
+  } finally {
+    // Explicitly clear plaintext bytes after local scanning.
+    fileBytes?.fill(0);
   }
 }

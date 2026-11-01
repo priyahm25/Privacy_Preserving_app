@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -6,10 +6,10 @@ import {
   TextInput,
   TouchableOpacity,
   Platform,
-  Alert,
   ScrollView,
   ActivityIndicator,
   Clipboard,
+  Linking,
   Share,
 } from "react-native";
 import { router } from "expo-router";
@@ -17,181 +17,271 @@ import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useColors } from "@/hooks/useColors";
 import { useAuth, useUser } from "@clerk/expo";
+import { useAuthenticatedApi } from "@/lib/authenticatedApi";
+import {
+  createInvitation,
+  deliveryOutcome,
+  InvitationError,
+  isPendingInvitationError,
+  resendInvitation,
+  SESSION_EXPIRED_MESSAGE,
+  validateInviteEmail,
+  type CreatedInvitation,
+} from "@/lib/invitationsApi";
+import {
+  copyText,
+  invitationMailto,
+  MANUAL_COPY_HINT,
+  nativeShare,
+  webShare,
+  type ClipboardApis,
+} from "@/lib/invitationSharing";
+
+type Feedback = { tone: "success" | "info" | "error"; text: string };
+
+// Status and message only - never the request, link or session token.
+function logInvitationFailure(label: string, err: unknown) {
+  console.warn(
+    label,
+    err instanceof InvitationError ? err.status : "unexpected",
+    err instanceof Error ? err.message : err,
+  );
+}
+
+// react-native-web's Clipboard.setString ignores execCommand's result and
+// reports success even when nothing was copied, so web uses the async
+// Clipboard API with a checked execCommand fallback instead.
+function legacyWebCopy(text: string): boolean {
+  const el = document.createElement("textarea");
+  el.value = text;
+  el.setAttribute("readonly", "");
+  el.style.position = "fixed";
+  el.style.opacity = "0";
+  document.body.appendChild(el);
+  el.select();
+  try {
+    return document.execCommand("copy");
+  } finally {
+    document.body.removeChild(el);
+  }
+}
+
+function clipboardApis(): ClipboardApis {
+  if (Platform.OS !== "web") {
+    return { writeText: async (text) => Clipboard.setString(text) };
+  }
+  const clipboard =
+    typeof navigator !== "undefined" ? navigator.clipboard : undefined;
+  return {
+    writeText: clipboard?.writeText
+      ? (text) => clipboard.writeText(text)
+      : undefined,
+    legacyCopy:
+      typeof document !== "undefined" &&
+      typeof document.execCommand === "function"
+        ? legacyWebCopy
+        : undefined,
+  };
+}
 
 export default function InviteTeammate() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
   const { user } = useUser();
-  const { getToken, isLoaded, isSignedIn } = useAuth();
+  const { isLoaded, isSignedIn } = useAuth();
+  const { request } = useAuthenticatedApi();
   const topPad = Platform.OS === "web" ? 67 : insets.top;
+  const feedbackColor = (feedback: Feedback) =>
+    feedback.tone === "success"
+      ? colors.success
+      : feedback.tone === "error"
+        ? colors.destructive
+        : colors.mutedForeground;
 
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
+  // Shown inline: Alert.alert is a no-op on web, which hid API errors there.
+  const [inviteError, setInviteError] = useState<string | null>(null);
+  // State updates are async, so a fast double tap could pass the `loading` check twice.
+  const submittingRef = useRef(false);
   const [invitationLink, setInvitationLink] = useState<string | null>(null);
   const [invitedEmail, setInvitedEmail] = useState<string | null>(null);
   const [expiresAt, setExpiresAt] = useState<string | null>(null);
-  const [copyFeedback, setCopyFeedback] = useState<string | null>(null);
-  const [invitationToken, setInvitationToken] = useState<string | null>(null);
+  const [copyFeedback, setCopyFeedback] = useState<Feedback | null>(null);
+  const [shareFeedback, setShareFeedback] = useState<Feedback | null>(null);
+  const [showManualCopy, setShowManualCopy] = useState(false);
+  const [showShareOptions, setShowShareOptions] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
   const [emailError, setEmailError] = useState<string | null>(null);
   const [resending, setResending] = useState(false);
+  const resendingRef = useRef(false);
+  // Email whose invitation is already pending; shows "Resend Invitation".
+  const [pendingEmail, setPendingEmail] = useState<string | null>(null);
+  const [deliveryFeedback, setDeliveryFeedback] = useState<Feedback | null>(null);
+  const [matches, setMatches] = useState<
+    { clerkId: string; name: string | null; email: string }[]
+  >([]);
+
+  // Suggest registered users as the inviter types (debounced). Inviting is
+  // still by email, so unregistered addresses keep working.
+  // Depends on the stable `request`, not Clerk's getToken (a new function each
+  // render): with getToken here, the effect re-ran on every render and its
+  // setMatches([]) scheduled another render - "Maximum update depth exceeded".
+  useEffect(() => {
+    const query = email.trim();
+    if (query.length < 2 || !isLoaded || !isSignedIn) {
+      setMatches((prev) => (prev.length ? [] : prev));
+      return;
+    }
+    let cancelled = false;
+    const timer = setTimeout(async () => {
+      try {
+        const response = await request(
+          `/api/teammates/search?q=${encodeURIComponent(query)}`,
+        );
+        if (!cancelled) {
+          setMatches(response.ok ? ((await response.json()).users ?? []) : []);
+        }
+      } catch {
+        if (!cancelled) setMatches([]);
+      }
+    }, 300);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [email, isLoaded, isSignedIn, request]);
+
+  const handleEmailChange = (value: string) => {
+    setEmail(value);
+    setInviteError(null);
+    setPendingEmail(null);
+  };
 
   const resetInvitation = () => {
     setInvitationLink(null);
     setInvitedEmail(null);
     setExpiresAt(null);
     setCopyFeedback(null);
-    setInvitationToken(null);
+    setShareFeedback(null);
+    setShowManualCopy(false);
+    setShowShareOptions(false);
     setEmailSent(false);
     setEmailError(null);
+    setInviteError(null);
+    setPendingEmail(null);
+    setDeliveryFeedback(null);
+  };
+
+  const applyInvitation = (
+    invitation: CreatedInvitation,
+    kind: "created" | "resent",
+  ) => {
+    const outcome = deliveryOutcome(invitation, kind);
+    setInvitationLink(invitation.invitationLink);
+    setInvitedEmail(invitation.invitedEmail);
+    setExpiresAt(
+      invitation.expiresAt
+        ? new Date(invitation.expiresAt).toLocaleString()
+        : null,
+    );
+    setEmailSent(invitation.emailSent);
+    setEmailError(invitation.emailError);
+    setCopyFeedback(null);
+    setShareFeedback(null);
+    setDeliveryFeedback({ tone: outcome.tone, text: outcome.text });
+    setShowShareOptions(outcome.showFallbacks);
+    setPendingEmail(null);
+    setInviteError(null);
+    setEmail("");
   };
 
   const handleInvite = async () => {
-    if (loading) {
+    if (loading || submittingRef.current) {
       return;
     }
+    setInviteError(null);
+    setPendingEmail(null);
 
-    const normalizedEmail = email.trim().toLowerCase();
-    if (!normalizedEmail) {
-      Alert.alert("Error", "Please enter an email address");
-      return;
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(normalizedEmail)) {
-      Alert.alert("Error", "Please enter a valid email address");
+    const validationError = validateInviteEmail(email);
+    if (validationError) {
+      setInviteError(validationError);
       return;
     }
 
     if (!isLoaded || !isSignedIn || !user) {
-      Alert.alert("Error", "You must be signed in to generate an invitation.");
+      setInviteError(SESSION_EXPIRED_MESSAGE);
       return;
     }
 
+    submittingRef.current = true;
     setLoading(true);
     try {
-      const token = await getToken();
-      if (!token) {
-        Alert.alert("Error", "Unable to load your Clerk session token.");
-        return;
-      }
+      const invitation = await createInvitation(request, email);
 
-      const response = await fetch(
-        `${process.env.EXPO_PUBLIC_API_URL || "http://localhost:3000"}/api/teammates/invite`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ invitedEmail: normalizedEmail }),
-        },
-      );
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        Alert.alert(
-          "Error",
-          errorData?.error || "Failed to create invitation.",
-        );
-        return;
-      }
-
-      const data = await response.json();
-      const nextLink = data?.invitationLink || null;
-      const nextExpiresAt = data?.expiresAt
-        ? new Date(data.expiresAt).toLocaleString()
-        : null;
-
-      setInvitationLink(nextLink);
-      setInvitedEmail(data?.invitedEmail || normalizedEmail);
-      setExpiresAt(nextExpiresAt);
-      setInvitationToken(data?.token ?? null);
-      setEmailSent(Boolean(data?.emailSent));
-      setEmailError(data?.emailSent ? null : (data?.emailError ?? null));
-      setCopyFeedback(null);
-      setEmail("");
-      Alert.alert(
-        data?.emailSent ? "Invitation sent" : "Invitation created",
-        data?.emailSent
-          ? `We emailed the invitation link to ${data?.invitedEmail || normalizedEmail}.`
-          : "The invitation was created, but the email could not be sent. Share the link below instead.",
-      );
+      applyInvitation(invitation, "created");
     } catch (err) {
-      console.error("Error inviting teammate:", err);
-      Alert.alert(
-        "Error",
-        err instanceof Error
+      logInvitationFailure("Invitation failed:", err);
+      // Already pending: offer to resend that invitation instead of a duplicate.
+      setPendingEmail(isPendingInvitationError(err) ? email.trim().toLowerCase() : null);
+      setInviteError(
+        err instanceof InvitationError
           ? err.message
           : "Failed to create invitation. Please try again.",
       );
     } finally {
+      submittingRef.current = false;
       setLoading(false);
     }
   };
 
-  const handleResendEmail = async () => {
-    if (!invitationToken || resending) {
+  // Re-sends the caller's existing pending invitation (same link, no new
+  // invitation). Used from the "already pending" banner and the link view.
+  const handleResend = async (targetEmail: string | null) => {
+    if (!targetEmail || resending || resendingRef.current) {
       return;
     }
-
+    resendingRef.current = true;
     setResending(true);
+    setInviteError(null);
+    setDeliveryFeedback(null);
     try {
-      const token = await getToken();
-      if (!token) {
-        Alert.alert("Error", "Unable to load your Clerk session token.");
-        return;
-      }
-
-      const response = await fetch(
-        `${process.env.EXPO_PUBLIC_API_URL || "http://localhost:3000"}/api/teammates/invite/resend`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ token: invitationToken }),
-        },
-      );
-
-      const data = await response.json().catch(() => ({}));
-
-      if (!response.ok) {
-        setEmailError(data?.error || "Failed to send the invitation email.");
-        Alert.alert(
-          "Email not sent",
-          data?.error || "Failed to send the invitation email.",
-        );
-        return;
-      }
-
-      setEmailSent(true);
-      setEmailError(null);
-      Alert.alert("Email sent", `Invitation emailed to ${invitedEmail}.`);
+      const invitation = await resendInvitation(request, targetEmail);
+      applyInvitation(invitation, "resent");
     } catch (err) {
-      console.error("Error resending invitation email:", err);
+      logInvitationFailure("Resend failed:", err);
       const message =
-        err instanceof Error ? err.message : "Failed to send the email.";
-      setEmailError(message);
-      Alert.alert("Error", message);
+        err instanceof InvitationError
+          ? err.message
+          : "Failed to resend the invitation. Please try again.";
+      if (invitationLink) {
+        setDeliveryFeedback({ tone: "error", text: message });
+      } else {
+        // Expired/accepted/not found: nothing left to resend, so drop the
+        // button; "Generate Invitation" issues a fresh one where allowed.
+        setPendingEmail(null);
+        setInviteError(message);
+      }
     } finally {
+      resendingRef.current = false;
       setResending(false);
     }
   };
 
+  // Feedback is inline because Alert.alert does nothing on web.
   const handleCopyLink = async () => {
     if (!invitationLink) {
       return;
     }
 
-    try {
-      await Clipboard.setString(invitationLink);
-      setCopyFeedback("Link copied!");
-      Alert.alert("Copied", "Invitation link copied to clipboard.");
-    } catch (err) {
-      console.error("Copy invitation link failed:", err);
-      Alert.alert("Error", "Failed to copy link");
+    const result = await copyText(invitationLink, clipboardApis());
+    if (result.ok) {
+      setCopyFeedback({ tone: "success", text: "Link copied to clipboard." });
+      setShowManualCopy(false);
+    } else {
+      console.warn("Copy invitation link failed:", result.reason);
+      setCopyFeedback({ tone: "error", text: result.message });
+      setShowManualCopy(true);
     }
   };
 
@@ -200,48 +290,53 @@ export default function InviteTeammate() {
       return;
     }
 
-    try {
-      if (Platform.OS === "web" && typeof navigator !== "undefined") {
-        if (navigator.share) {
-          await navigator.share({
-            title: "SecureSphere invitation",
-            text: "Join my SecureSphere workspace.",
-            url: invitationLink,
-          });
-          return;
-        }
+    const result =
+      Platform.OS === "web"
+        ? await webShare(
+            invitationLink,
+            typeof navigator !== "undefined" ? navigator : undefined,
+          )
+        : await nativeShare(invitationLink, (content) => Share.share(content));
 
-        if (navigator.clipboard) {
-          await navigator.clipboard.writeText(invitationLink);
-          Alert.alert(
-            "Share unavailable",
-            "The invitation link was copied to your clipboard for sharing.",
-          );
-          return;
-        }
+    if (result.outcome === "shared") {
+      setShareFeedback({ tone: "success", text: "Invitation link shared." });
+      setShowShareOptions(false);
+    } else if (result.outcome === "cancelled") {
+      setShareFeedback({ tone: "info", text: "Sharing cancelled." });
+    } else {
+      if (result.outcome === "failed") {
+        console.warn("Share invitation link failed");
       }
-
-      await Share.share({
-        message: invitationLink,
-        url: invitationLink,
-        title: "SecureSphere invitation",
+      setShareFeedback({
+        tone: result.outcome === "failed" ? "error" : "info",
+        text:
+          result.outcome === "failed"
+            ? result.message
+            : "Sharing isn't supported in this browser. Copy the link or send it from your email app instead.",
       });
+      setShowShareOptions(true);
+    }
+  };
+
+  const handleEmailClient = async () => {
+    if (!invitationLink) {
+      return;
+    }
+    try {
+      await Linking.openURL(
+        invitationMailto(
+          invitationLink,
+          invitedEmail,
+          user?.fullName || user?.firstName,
+        ),
+      );
     } catch (err) {
-      console.error("Share invitation link failed:", err);
-      if (Platform.OS === "web" && typeof navigator !== "undefined") {
-        try {
-          await navigator.clipboard.writeText(invitationLink);
-          Alert.alert(
-            "Share unavailable",
-            "The invitation link was copied to your clipboard for sharing.",
-          );
-          return;
-        } catch {
-          Alert.alert("Error", "Failed to share link");
-        }
-        return;
-      }
-      Alert.alert("Error", "Failed to share link");
+      console.warn("Opening email app failed:", err instanceof Error ? err.message : err);
+      setShareFeedback({
+        tone: "error",
+        text: "Couldn't open an email app. Copy the link and paste it into your email instead.",
+      });
+      setShowManualCopy(true);
     }
   };
 
@@ -310,15 +405,39 @@ export default function InviteTeammate() {
                   placeholder="teammate@example.com"
                   placeholderTextColor={colors.mutedForeground}
                   value={email}
-                  onChangeText={setEmail}
+                  onChangeText={handleEmailChange}
                   keyboardType="email-address"
                   editable={!loading}
                   autoCapitalize="none"
                 />
 
+                {matches
+                  .filter((m) => m.email !== email.trim().toLowerCase())
+                  .slice(0, 5)
+                  .map((m) => (
+                    <TouchableOpacity
+                      key={m.clerkId}
+                      onPress={() => handleEmailChange(m.email)}
+                      style={[
+                        styles.suggestion,
+                        { backgroundColor: colors.card, borderColor: colors.border },
+                      ]}
+                    >
+                      <Ionicons name="person-circle" size={20} color={colors.primary} />
+                      <View style={{ flex: 1 }}>
+                        <Text style={{ color: colors.foreground, fontSize: 14 }}>
+                          {m.name || m.email.split("@")[0]}
+                        </Text>
+                        <Text style={{ color: colors.mutedForeground, fontSize: 12 }}>
+                          {m.email}
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                  ))}
+
                 <TouchableOpacity
                   onPress={handleInvite}
-                  disabled={loading}
+                  disabled={loading || resending}
                   style={[
                     styles.inviteBtn,
                     {
@@ -351,6 +470,57 @@ export default function InviteTeammate() {
                     </>
                   )}
                 </TouchableOpacity>
+
+                {inviteError ? (
+                  <View
+                    accessibilityRole="alert"
+                    accessibilityLiveRegion="polite"
+                    style={[
+                      styles.errorRow,
+                      {
+                        backgroundColor: `${colors.destructive}15`,
+                        borderColor: `${colors.destructive}40`,
+                      },
+                    ]}
+                  >
+                    <Ionicons
+                      name="alert-circle-outline"
+                      size={16}
+                      color={colors.destructive}
+                    />
+                    <Text
+                      style={[styles.errorText, { color: colors.destructive }]}
+                    >
+                      {inviteError}
+                    </Text>
+                  </View>
+                ) : null}
+
+                {pendingEmail ? (
+                  <TouchableOpacity
+                    onPress={() => handleResend(pendingEmail)}
+                    disabled={resending}
+                    style={[
+                      styles.actionBtn,
+                      {
+                        backgroundColor: `${colors.primary}15`,
+                        borderColor: colors.primary,
+                        opacity: resending ? 0.6 : 1,
+                      },
+                    ]}
+                  >
+                    {resending ? (
+                      <ActivityIndicator size="small" color={colors.primary} />
+                    ) : (
+                      <Ionicons name="refresh" size={18} color={colors.primary} />
+                    )}
+                    <Text
+                      style={[styles.actionBtnText, { color: colors.primary }]}
+                    >
+                      {resending ? "Resending..." : "Resend Invitation"}
+                    </Text>
+                  </TouchableOpacity>
+                ) : null}
 
                 <Text
                   style={[styles.helperText, { color: colors.mutedForeground }]}
@@ -404,6 +574,18 @@ export default function InviteTeammate() {
                   </Text>
                 ) : null}
 
+                {deliveryFeedback ? (
+                  <Text
+                    accessibilityLiveRegion="polite"
+                    style={[
+                      styles.deliveryFeedback,
+                      { color: feedbackColor(deliveryFeedback) },
+                    ]}
+                  >
+                    {deliveryFeedback.text}
+                  </Text>
+                ) : null}
+
                 <View
                   style={[
                     styles.deliveryRow,
@@ -430,8 +612,7 @@ export default function InviteTeammate() {
                   >
                     {emailSent
                       ? "Invitation email delivered"
-                      : emailError ||
-                        "Email not sent — share the link below instead."}
+                      : `Email not sent. ${emailError || "Share the invitation link below instead."}`}
                   </Text>
                 </View>
               </View>
@@ -456,12 +637,21 @@ export default function InviteTeammate() {
                   ]}
                 >
                   <Text
+                    selectable
                     style={[styles.linkText, { color: colors.foreground }]}
-                    numberOfLines={4}
+                    numberOfLines={showManualCopy ? undefined : 4}
                   >
                     {invitationLink}
                   </Text>
                 </View>
+
+                {showManualCopy ? (
+                  <Text
+                    style={[styles.helperText, { color: colors.mutedForeground, marginTop: 0 }]}
+                  >
+                    {MANUAL_COPY_HINT}
+                  </Text>
+                ) : null}
 
                 <TouchableOpacity
                   onPress={handleCopyLink}
@@ -483,9 +673,13 @@ export default function InviteTeammate() {
 
                 {copyFeedback ? (
                   <Text
-                    style={[styles.copyFeedback, { color: colors.success }]}
+                    accessibilityLiveRegion="polite"
+                    style={[
+                      styles.copyFeedback,
+                      { color: feedbackColor(copyFeedback) },
+                    ]}
                   >
-                    {copyFeedback}
+                    {copyFeedback.text}
                   </Text>
                 ) : null}
 
@@ -511,15 +705,51 @@ export default function InviteTeammate() {
                   </Text>
                 </TouchableOpacity>
 
+                {shareFeedback ? (
+                  <Text
+                    accessibilityLiveRegion="polite"
+                    style={[
+                      styles.copyFeedback,
+                      { color: feedbackColor(shareFeedback) },
+                    ]}
+                  >
+                    {shareFeedback.text}
+                  </Text>
+                ) : null}
+
+                {showShareOptions ? (
+                  <TouchableOpacity
+                    onPress={handleEmailClient}
+                    style={[
+                      styles.actionBtn,
+                      {
+                        backgroundColor: colors.card,
+                        borderColor: colors.border,
+                      },
+                    ]}
+                  >
+                    <Ionicons
+                      name="open-outline"
+                      size={18}
+                      color={colors.primary}
+                    />
+                    <Text
+                      style={[styles.actionBtnText, { color: colors.foreground }]}
+                    >
+                      Open in Email App
+                    </Text>
+                  </TouchableOpacity>
+                ) : null}
+
                 <TouchableOpacity
-                  onPress={handleResendEmail}
-                  disabled={!invitationToken || resending}
+                  onPress={() => handleResend(invitedEmail)}
+                  disabled={!invitedEmail || resending}
                   style={[
                     styles.actionBtn,
                     {
                       backgroundColor: colors.card,
                       borderColor: colors.border,
-                      opacity: !invitationToken || resending ? 0.6 : 1,
+                      opacity: !invitedEmail || resending ? 0.6 : 1,
                     },
                   ]}
                 >
@@ -535,7 +765,11 @@ export default function InviteTeammate() {
                   <Text
                     style={[styles.actionBtnText, { color: colors.foreground }]}
                   >
-                    {emailSent ? "Resend Email" : "Send Email Invitation"}
+                    {resending
+                      ? "Sending..."
+                      : emailSent
+                        ? "Resend Email"
+                        : "Retry Sending Email"}
                   </Text>
                 </TouchableOpacity>
 
@@ -653,6 +887,14 @@ const styles = StyleSheet.create({
     fontFamily: "Inter_600SemiBold",
     marginTop: 8,
   },
+  suggestion: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    padding: 10,
+    borderRadius: 10,
+    borderWidth: 1,
+  },
   input: {
     borderRadius: 12,
     borderWidth: 1,
@@ -673,6 +915,26 @@ const styles = StyleSheet.create({
   inviteBtnText: {
     fontSize: 15,
     fontFamily: "Inter_600SemiBold",
+  },
+  deliveryFeedback: {
+    fontSize: 13,
+    fontFamily: "Inter_500Medium",
+    textAlign: "center",
+    marginTop: 12,
+  },
+  errorRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderRadius: 10,
+    borderWidth: 1,
+  },
+  errorText: {
+    fontSize: 13,
+    fontFamily: "Inter_500Medium",
+    flex: 1,
   },
   helperText: {
     fontSize: 12,

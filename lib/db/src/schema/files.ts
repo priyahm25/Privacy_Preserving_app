@@ -169,9 +169,59 @@ export const fileSearchTokensTable = pgTable(
   ],
 ).enableRLS();
 
+/**
+ * Per-recipient display name for a shared file. Lets a recipient rename a file
+ * in their own "Shared by Others" listing without touching the owner's
+ * filename or any other recipient's view. Scoped to (fileId, userId).
+ */
+export const fileDisplayNamesTable = pgTable(
+  "file_display_names",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    fileId: uuid("file_id")
+      .notNull()
+      .references(() => filesTable.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => usersTable.clerkId, { onDelete: "cascade" }),
+    displayName: text("display_name").notNull(),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("file_display_names_unique_idx").on(table.fileId, table.userId),
+    index("file_display_names_user_idx").on(table.userId),
+  ],
+).enableRLS();
+
+/**
+ * Owner "Delete for Me": hides an owned file from the owner's own Shared-by-Me
+ * listing without deleting the file or revoking any recipient. The file still
+ * appears in the owner's My Files, and all shares, keys and storage stay
+ * intact. Scoped to (fileId, userId).
+ */
+export const fileHiddenTable = pgTable(
+  "file_hidden",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    fileId: uuid("file_id")
+      .notNull()
+      .references(() => filesTable.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => usersTable.clerkId, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("file_hidden_unique_idx").on(table.fileId, table.userId),
+  ],
+).enableRLS();
+
 // Zod schemas
 export type InsertFile = typeof filesTable.$inferInsert;
 export type FileRecord = typeof filesTable.$inferSelect;
+export type FileDisplayName = typeof fileDisplayNamesTable.$inferSelect;
+export type FileHidden = typeof fileHiddenTable.$inferSelect;
 
 export const insertFileShareSchema = createInsertSchema(fileSharesTable).omit({
   id: true,
